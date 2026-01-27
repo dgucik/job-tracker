@@ -18,3 +18,21 @@ class WorkLocationException(BaseDomainException):
     def __init__(self, message: str = "Work location is invalid.") -> None:
         self.message = message
         super().__init__(self.message)
+
+
+class CompensationException(BaseDomainException):
+    """Exception raised for errors in the compensation details."""
+
+    def __init__(self, message: str = "Compensation details are invalid.") -> None:
+        self.message = message
+        super().__init__(self.message)
+
+
+class CurrencyNotProvidedException(CompensationException):
+    """Exception raised when currency is not provided with salary values."""
+
+    def __init__(
+        self, message: str = "Currency must be provided if salary values are specified."
+    ) -> None:
+        self.message = message
+        super().__init__(self.message)

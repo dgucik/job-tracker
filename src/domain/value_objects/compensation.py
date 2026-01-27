@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from enum import Enum
 
-from domain.exceptions import SalaryRangeException
+from domain.exceptions import CurrencyNotProvidedException, SalaryRangeException
 
 
 class EmploymentType(Enum):
@@ -24,7 +24,7 @@ class Compensation:
 
     min_salary: int | None
     max_salary: int | None
-    currency: str
+    currency: str | None
     employment_type: EmploymentType
 
     def __post_init__(self) -> None:
@@ -35,3 +35,6 @@ class Compensation:
                 raise SalaryRangeException(
                     "Minimum salary cannot be greater than maximum salary."
                 )
+        if self.min_salary or self.max_salary:
+            if not self.currency:
+                raise CurrencyNotProvidedException
