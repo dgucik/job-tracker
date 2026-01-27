@@ -24,3 +24,9 @@ build-backend = "poetry.core.masonry.api"
 dev = [
     "pre-commit (>=4.5.1,<5.0.0)"
 ]
+
+[tool.mypy]
+mypy_path = "src"
+explicit_package_bases = true
+check_untyped_defs = true
+disallow_untyped_defs = true
