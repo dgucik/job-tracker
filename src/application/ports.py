@@ -5,11 +5,11 @@ from domain.repositories import JobApplicationRepository
 
 
 class UnitOfWork(Protocol):
-    job_applications: JobApplicationRepository
+    job_applications: JobApplicationRepository | None
 
-    def __aenter__(self) -> "UnitOfWork": ...
+    async def __aenter__(self) -> "UnitOfWork": ...
 
-    def __aexit__(
+    async def __aexit__(
         self,
         exc_type: type[BaseException] | None,
         exc_val: BaseException | None,
