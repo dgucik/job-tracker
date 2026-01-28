@@ -4,7 +4,7 @@ from uuid import UUID
 from domain.entities.job_application import JobApplication
 
 
-class JobApplicationPort(Protocol):
+class JobApplicationRepository(Protocol):
     async def add(self, entity: JobApplication) -> None: ...
 
     async def get_by_id(self, id: UUID) -> JobApplication | None: ...
