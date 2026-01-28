@@ -11,7 +11,10 @@ dependencies = [
     "fastapi[standard] (>=0.128.0,<0.129.0)",
     "uvicorn (>=0.40.0,<0.41.0)",
     "sqlalchemy (>=2.0.46,<3.0.0)",
-    "alembic (>=1.18.1,<2.0.0)"
+    "alembic (>=1.18.1,<2.0.0)",
+    "pydantic-settings (>=2.12.0,<3.0.0)",
+    "asyncpg (>=0.31.0,<0.32.0)",
+    "greenlet (>=3.3.1,<4.0.0)"
 
 ]
 
@@ -31,9 +34,10 @@ mypy_path = "src"
 explicit_package_bases = true
 check_untyped_defs = true
 disallow_untyped_defs = true
+ignore_missing_imports = true
 
 [[tool.mypy.overrides]]
-module = "tests.*"
+module = ["tests.*", "alembic.*"]
 ignore_errors = true
 
 [tool.pytest.ini_options]
