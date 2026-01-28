@@ -1,9 +1,9 @@
-from collections.abc import AsyncGenerator
+from collections.abc import Generator
 from infrastructure.db.session import AsyncSessionLocal
 from infrastructure.db.unit_of_work import SqlAlchemyUnitOfWork
 
 
-async def get_unit_of_work() -> AsyncGenerator[SqlAlchemyUnitOfWork, None]:
+def get_unit_of_work() -> Generator[SqlAlchemyUnitOfWork, None]:
     """
     Dependency injector for SqlAlchemyUnitOfWork.
 
