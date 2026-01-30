@@ -1,5 +1,5 @@
 from types import TracebackType
-from typing import Protocol
+from typing import Protocol, Type, TypeVar
 
 from domain.repositories import JobApplicationRepository
 
@@ -19,3 +19,30 @@ class UnitOfWork(Protocol):
     async def commit(self) -> None: ...
 
     async def rollback(self) -> None: ...
+
+
+TCommand = TypeVar("TCommand", contravariant=True)
+TQuery = TypeVar("TQuery", contravariant=True)
+TResult = TypeVar("TResult", covariant=True)
+
+
+class CommandHandler(Protocol[TCommand]):
+    async def execute(self, command: TCommand) -> None: ...
+
+
+class CommandBus(Protocol):
+    def register_handler(
+        self, command_type: Type[TCommand], handler: CommandHandler[TCommand]
+    ) -> None: ...
+    async def execute(self, command: TCommand) -> None: ...
+
+
+class QueryHandler(Protocol[TQuery]):
+    async def execute(self, query: TQuery) -> TResult: ...
+
+
+class QueryBus(Protocol):
+    def register_handler(
+        self, query_type: Type[TQuery], handler: QueryHandler[TQuery]
+    ) -> None: ...
+    async def execute(self, query: TQuery) -> TResult: ...
