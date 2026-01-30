@@ -21,11 +21,13 @@ class UnitOfWork(Protocol):
     async def rollback(self) -> None: ...
 
 
+# Type variables for command and query handlers
 TCommand = TypeVar("TCommand", contravariant=True)
 TQuery = TypeVar("TQuery", contravariant=True)
 TResult = TypeVar("TResult", covariant=True)
 
 
+# Command and query handlers
 class CommandHandler(Protocol[TCommand]):
     async def execute(self, command: TCommand) -> None: ...
 
