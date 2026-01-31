@@ -4,6 +4,7 @@ from domain.entities.job_application import JobApplication
 from domain.repositories import JobApplicationRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Result, Select, select
+from sqlalchemy.orm import selectinload
 
 from domain.value_objects.compensation import Compensation
 from domain.value_objects.work_location import WorkLocation
@@ -19,11 +20,17 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         self._session.add(model)
 
     async def get_all(self) -> list[JobApplication]:
-        stmt = select(JobApplicationModel)
+        stmt = select(JobApplicationModel).options(
+            selectinload(JobApplicationModel.compensations)
+        )
         return await self._execute_many(stmt)
 
     async def get_by_id(self, id: UUID) -> JobApplication | None:
-        stmt = select(JobApplicationModel).where(JobApplicationModel.id == id)
+        stmt = (
+            select(JobApplicationModel)
+            .where(JobApplicationModel.id == id)
+            .options(selectinload(JobApplicationModel.compensations))
+        )
         return await self._execute_scalar(stmt)
 
     async def update(self, entity: JobApplication) -> None:
@@ -42,7 +49,8 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
             posting_url=model.posting_url,
             status=model.status,
             work_location=WorkLocation(
-                work_model=model.work_model, location=model.location
+                work_model=model.work_model,
+                location=model.location,
             ),
             compensations=[
                 Compensation(
@@ -65,7 +73,7 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
             status=entity.status,
             work_model=entity.work_location.work_model,
             location=entity.work_location.location,
-            compensation=[
+            compensations=[
                 JobCompensationModel(
                     min_salary=comp.min_salary,
                     max_salary=comp.max_salary,

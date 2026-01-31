@@ -1,4 +1,4 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from application.mappers.job_application import job_application_to_dto
 from application.ports import CommandHandler, UnitOfWork
@@ -9,21 +9,21 @@ from domain.value_objects.work_location import WorkLocation, WorkModel
 
 
 class RawCompensation(BaseModel):
-    min_salary: int | None
-    max_salary: int | None
-    currency: str | None
-    employment_type: str
+    min_salary: int | None = Field(default=None, examples=[5000], ge=0)
+    max_salary: int | None = Field(default=None, examples=[8000], ge=0)
+    currency: str | None = Field(default=None, examples=["USD"])
+    employment_type: str = Field(examples=["B2B"])
 
 
 class CreateJobApplicationCommand(BaseModel):
-    company_name: str
-    role_name: str
-    posting_url: str
-    status: str
-    work_model: WorkModel
-    work_location: str | None
-    compensations: list[RawCompensation]
-    notes: str | None = None
+    company_name: str = Field(min_length=1, max_length=255, examples=["Google"])
+    role_name: str = Field(min_length=1, max_length=255, examples=["Software Engineer"])
+    posting_url: str = Field(examples=["https://www.google.com"])
+    status: str = Field(examples=["APPLIED"])
+    work_model: WorkModel = Field(examples=["REMOTE"])
+    work_location: str | None = Field(default=None, examples=["Warsaw"])
+    compensations: list[RawCompensation] = Field(default_factory=list)
+    notes: str | None = Field(default=None, examples=["Exciting opportunity"])
 
 
 class CreateJobApplicationCommandHandler(

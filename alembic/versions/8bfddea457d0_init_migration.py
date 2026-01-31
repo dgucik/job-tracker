@@ -1,8 +1,8 @@
 """Init migration
 
-Revision ID: abd89ee8459c
+Revision ID: 8bfddea457d0
 Revises:
-Create Date: 2026-01-28 01:51:09.751784
+Create Date: 2026-02-01 00:25:24.609027
 
 """
 
@@ -13,7 +13,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision: str = "abd89ee8459c"
+revision: str = "8bfddea457d0"
 down_revision: Union[str, Sequence[str], None] = None
 branch_labels: Union[str, Sequence[str], None] = None
 depends_on: Union[str, Sequence[str], None] = None
@@ -40,7 +40,11 @@ def upgrade() -> None:
             ),
             nullable=False,
         ),
-        sa.Column("work_model", sa.String(length=50), nullable=False),
+        sa.Column(
+            "work_model",
+            sa.Enum("REMOTE", "HYBRID", "ONSITE", name="workmodel"),
+            nullable=False,
+        ),
         sa.Column("location", sa.String(length=255), nullable=True),
         sa.Column("notes", sa.String(), nullable=True),
         sa.PrimaryKeyConstraint("id"),

@@ -7,6 +7,7 @@ from sqlalchemy.dialects.postgresql import UUID as PG_UUID
 
 from domain.entities.job_application import ApplicationStatus
 from domain.value_objects.compensation import EmploymentType
+from domain.value_objects.work_location import WorkModel
 
 
 class Base(AsyncAttrs, DeclarativeBase):
@@ -25,7 +26,9 @@ class JobApplicationModel(Base):
     status: Mapped[ApplicationStatus] = mapped_column(
         SQLEnum(ApplicationStatus, native_enum=True), nullable=False
     )
-    work_model: Mapped[str] = mapped_column(String(50), nullable=False)
+    work_model: Mapped[WorkModel] = mapped_column(
+        SQLEnum(WorkModel, native_enum=True), nullable=False
+    )
     location: Mapped[Optional[str]] = mapped_column(String(255), nullable=True)
     compensations: Mapped[List["JobCompensationModel"]] = relationship(
         back_populates="job_application", cascade="all, delete-orphan"

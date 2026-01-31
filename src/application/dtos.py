@@ -18,8 +18,8 @@ class JobApplicationDTO(BaseModel):
     company_name: str = Field(min_length=1, max_length=255, examples=["Google"])
     role_name: str = Field(min_length=1, max_length=255, examples=["Software Engineer"])
     posting_url: str = Field(examples=["https://www.google.com"])
-    status: ApplicationStatus
-    work_model: WorkModel
+    status: ApplicationStatus = Field(examples=["APPLIED"])
+    work_model: WorkModel = Field(examples=["REMOTE"])
     work_location: str | None = Field(default=None, examples=["Warsaw"])
     compensations: list[CompensationDTO] = Field(default_factory=list)
     notes: str | None = Field(default=None, examples=["Exciting opportunity"])
