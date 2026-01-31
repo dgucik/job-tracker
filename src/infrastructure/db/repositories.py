@@ -15,55 +15,22 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         self._session = session
 
     async def add(self, entity: JobApplication) -> None:
-        """
-        Adds a new JobApplication entity to the database.
-
-        Args:
-            entity: The JobApplication entity to add.
-        """
         model = self._to_model(entity)
         self._session.add(model)
 
     async def get_all(self) -> list[JobApplication]:
-        """
-        Retrieves all JobApplication entities from the database.
-
-        Returns:
-            A list of JobApplication entities.
-        """
         stmt = select(JobApplicationModel)
         return await self._execute_many(stmt)
 
     async def get_by_id(self, id: UUID) -> JobApplication | None:
-        """
-        Retrieves a JobApplication entity by its ID.
-
-        Args:
-            id: The unique identifier of the JobApplication.
-
-        Returns:
-            The JobApplication entity if found, else None.
-        """
         stmt = select(JobApplicationModel).where(JobApplicationModel.id == id)
         return await self._execute_scalar(stmt)
 
     async def update(self, entity: JobApplication) -> None:
-        """
-        Updates an existing JobApplication entity in the database.
-
-        Args:
-            entity: The JobApplication entity to update.
-        """
         model = self._to_model(entity)
         await self._session.merge(model)
 
     async def delete(self, entity: JobApplication) -> None:
-        """
-        Deletes a JobApplication entity from the database.
-
-        Args:
-            entity: The JobApplication entity to delete.
-        """
         model = self._to_model(entity)
         await self._session.delete(model)
 

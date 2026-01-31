@@ -16,8 +16,6 @@ class Base(AsyncAttrs, DeclarativeBase):
 
 
 class JobApplicationModel(Base):
-    """Model for job applications."""
-
     __tablename__ = "job_applications"
 
     id: Mapped[uuid.UUID] = mapped_column(PG_UUID(as_uuid=True), primary_key=True)
@@ -36,8 +34,6 @@ class JobApplicationModel(Base):
 
 
 class JobCompensationModel(Base):
-    """Model for job compensations."""
-
     __tablename__ = "job_compensations"
 
     id: Mapped[int] = mapped_column(primary_key=True, autoincrement=True)

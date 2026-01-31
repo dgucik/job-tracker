@@ -30,23 +30,11 @@ class SqlAlchemyUnitOfWork(UnitOfWork):
                 await self._session.aclose()
 
     async def commit(self) -> None:
-        """
-        Commits the current transaction.
-
-        Raises:
-            SessionNotInitializedException: If the session is not initialized.
-        """
         if self._session is None:
             raise SessionNotInitializedException
         await self._session.commit()
 
     async def rollback(self) -> None:
-        """
-        Rolls back the current transaction.
-
-        Raises:
-            SessionNotInitializedException: If the session is not initialized.
-        """
         if self._session is None:
             raise SessionNotInitializedException
         await self._session.rollback()
