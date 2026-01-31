@@ -1,10 +1,11 @@
 import pytest
-from types import SimpleNamespace
 from uuid import uuid4
 
 from application.commands.update_job_application_notes import (
+    UpdateJobApplicationNotesCommand,
     UpdateJobApplicationNotesCommandHandler,
 )
+from application.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -35,16 +36,19 @@ async def test_execute_updates_notes_and_commits(
     app_id = job_application_with_notes.id
     uow.job_applications.get_by_id.return_value = job_application_with_notes
 
-    command = SimpleNamespace(
+    command = UpdateJobApplicationNotesCommand(
         job_application_id=app_id,
         notes="Updated notes after interview",
     )
 
-    await handler.execute(command)
+    result = await handler.execute(command)
 
     uow.job_applications.get_by_id.assert_called_once_with(app_id)
     assert job_application_with_notes.notes == "Updated notes after interview"
     uow.commit.assert_called_once()
+
+    assert isinstance(result, JobApplicationDTO)
+    assert result.notes == "Updated notes after interview"
 
 
 @pytest.mark.asyncio
@@ -52,7 +56,7 @@ async def test_execute_raises_when_application_not_found(handler, uow):
     app_id = uuid4()
     uow.job_applications.get_by_id.return_value = None
 
-    command = SimpleNamespace(
+    command = UpdateJobApplicationNotesCommand(
         job_application_id=app_id,
         notes="Some notes",
     )

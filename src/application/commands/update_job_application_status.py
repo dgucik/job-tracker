@@ -1,16 +1,13 @@
-from dataclasses import dataclass
 from uuid import UUID
 
-from pydantic import BaseModel
-
+from application.dtos import JobApplicationDTO
 from application.mappers.job_application import job_application_to_dto
 from application.ports import CommandHandler, UnitOfWork
-from application.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus
 from domain.exceptions import JobApplicationNotFoundException
+from pydantic import BaseModel
 
 
-@dataclass
 class UpdateJobApplicationStatusCommand(BaseModel):
     job_application_id: UUID
     new_status: str

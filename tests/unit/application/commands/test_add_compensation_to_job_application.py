@@ -5,6 +5,7 @@ from application.commands.add_compensation_to_job_application import (
     AddCompensationToJobApplicationCommand,
     AddCompensationToJobApplicationCommandHandler,
 )
+from application.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.compensation import EmploymentType
@@ -44,7 +45,7 @@ async def test_execute_adds_compensation_and_commits(
         employment_type="B2B",
     )
 
-    await handler.execute(command)
+    result = await handler.execute(command)
 
     uow.job_applications.get_by_id.assert_called_once_with(app_id)
     assert len(existing_job_application.compensations) == 1
@@ -55,6 +56,12 @@ async def test_execute_adds_compensation_and_commits(
         existing_job_application.compensations[0].employment_type == EmploymentType.B2B
     )
     uow.commit.assert_called_once()
+
+    assert isinstance(result, JobApplicationDTO)
+    assert result.id == app_id
+    assert len(result.compensations) == 1
+    assert result.compensations[0].min_salary == 6000
+    assert result.compensations[0].employment_type == "B2B"
 
 
 @pytest.mark.asyncio

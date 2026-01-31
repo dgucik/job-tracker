@@ -1,8 +1,9 @@
 import pytest
+
+from application.dtos import JobApplicationDTO
 from application.queries.get_job_application_list import (
     GetJobApplicationListQuery,
     GetJobApplicationListQueryHandler,
-    JobApplicationItemDTO,
 )
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
@@ -54,13 +55,13 @@ async def test_execute_returns_list_of_dtos(handler, uow, sample_job_application
 
     assert len(result) == 1
     dto = result[0]
-    assert isinstance(dto, JobApplicationItemDTO)
+    assert isinstance(dto, JobApplicationDTO)
     assert dto.id == sample_job_application.id
     assert dto.company_name == "Tech Corp"
     assert dto.role_name == "Software Engineer"
     assert dto.posting_url == "https://techcorp.com/jobs/123"
-    assert dto.status == "APPLIED"
-    assert dto.work_model == "REMOTE"
+    assert dto.status == ApplicationStatus.APPLIED
+    assert dto.work_model == WorkModel.REMOTE
     assert dto.work_location == "Warsaw"
     assert dto.notes == "Exciting opportunity"
     assert len(dto.compensations) == 1
@@ -92,6 +93,6 @@ async def test_execute_returns_multiple_dtos(handler, uow, sample_job_applicatio
     assert len(result) == 2
     assert result[0].company_name == "Tech Corp"
     assert result[1].company_name == "Other Co"
-    assert result[1].status == "REJECTED"
-    assert result[1].work_model == "HYBRID"
+    assert result[1].status == ApplicationStatus.REJECTED
+    assert result[1].work_model == WorkModel.HYBRID
     assert result[1].work_location == "Kraków"

@@ -1,8 +1,8 @@
 import pytest
-from types import SimpleNamespace
 from uuid import uuid4
 
 from application.commands.delete_job_application import (
+    DeleteJobApplicationCommand,
     DeleteJobApplicationCommandHandler,
 )
 from domain.entities.job_application import ApplicationStatus, JobApplication
@@ -35,13 +35,15 @@ async def test_execute_deletes_application_and_commits(
     app_id = existing_job_application.id
     uow.job_applications.get_by_id.return_value = existing_job_application
 
-    command = SimpleNamespace(job_application_id=app_id)
+    command = DeleteJobApplicationCommand(job_application_id=app_id)
 
-    await handler.execute(command)
+    result = await handler.execute(command)
 
     uow.job_applications.get_by_id.assert_called_once_with(app_id)
     uow.job_applications.delete.assert_called_once_with(existing_job_application)
     uow.commit.assert_called_once()
+
+    assert result == app_id
 
 
 @pytest.mark.asyncio
@@ -49,7 +51,7 @@ async def test_execute_raises_when_application_not_found(handler, uow):
     app_id = uuid4()
     uow.job_applications.get_by_id.return_value = None
 
-    command = SimpleNamespace(job_application_id=app_id)
+    command = DeleteJobApplicationCommand(job_application_id=app_id)
 
     with pytest.raises(JobApplicationNotFoundException) as exc_info:
         await handler.execute(command)
