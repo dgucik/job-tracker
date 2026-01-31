@@ -6,14 +6,14 @@ from domain.entities.job_application import ApplicationStatus
 from domain.value_objects.work_location import WorkModel
 
 
-class CompensationItemDTO(BaseModel):
+class CompensationDTO(BaseModel):
     min_salary: int | None
     max_salary: int | None
     currency: str | None
     employment_type: str
 
 
-class JobApplicationItemDTO(BaseModel):
+class JobApplicationDTO(BaseModel):
     id: UUID
     company_name: str = Field(min_length=1, max_length=255, examples=["Google"])
     role_name: str = Field(min_length=1, max_length=255, examples=["Software Engineer"])
@@ -21,5 +21,5 @@ class JobApplicationItemDTO(BaseModel):
     status: ApplicationStatus
     work_model: WorkModel
     work_location: str | None = Field(default=None, examples=["Warsaw"])
-    compensations: list[CompensationItemDTO] = Field(default_factory=list)
+    compensations: list[CompensationDTO] = Field(default_factory=list)
     notes: str | None = Field(default=None, examples=["Exciting opportunity"])

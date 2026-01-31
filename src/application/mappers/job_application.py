@@ -1,15 +1,15 @@
 from domain.entities.job_application import JobApplication
 
-from application.queries.dtos import (
-    CompensationItemDTO,
-    JobApplicationItemDTO,
+from application.dtos import (
+    CompensationDTO,
+    JobApplicationDTO,
 )
 
 
-def job_application_to_list_item_dto(
+def job_application_to_dto(
     entity: JobApplication,
-) -> JobApplicationItemDTO:
-    return JobApplicationItemDTO(
+) -> JobApplicationDTO:
+    return JobApplicationDTO(
         id=entity.id,
         company_name=entity.company_name,
         role_name=entity.role_name,
@@ -18,7 +18,7 @@ def job_application_to_list_item_dto(
         work_model=entity.work_location.work_model,
         work_location=entity.work_location.location,
         compensations=[
-            CompensationItemDTO(
+            CompensationDTO(
                 min_salary=c.min_salary,
                 max_salary=c.max_salary,
                 currency=c.currency,

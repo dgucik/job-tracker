@@ -1,8 +1,8 @@
 from pydantic import BaseModel
 
-from application.mappers.job_application import job_application_to_list_item_dto
+from application.mappers.job_application import job_application_to_dto
 from application.ports import CommandHandler, UnitOfWork
-from application.queries.dtos import JobApplicationItemDTO
+from application.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -27,7 +27,7 @@ class CreateJobApplicationCommand(BaseModel):
 
 
 class CreateJobApplicationCommandHandler(
-    CommandHandler[CreateJobApplicationCommand, JobApplicationItemDTO]
+    CommandHandler[CreateJobApplicationCommand, JobApplicationDTO]
 ):
     """
     Handler for creating a job application.
@@ -39,9 +39,7 @@ class CreateJobApplicationCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(
-        self, command: CreateJobApplicationCommand
-    ) -> JobApplicationItemDTO:
+    async def execute(self, command: CreateJobApplicationCommand) -> JobApplicationDTO:
         work_location = WorkLocation(
             work_model=command.work_model,
             location=command.work_location,
@@ -67,4 +65,4 @@ class CreateJobApplicationCommandHandler(
         async with self._uow:
             await self._uow.job_applications.add(job_application)
             await self._uow.commit()
-        return job_application_to_list_item_dto(job_application)
+        return job_application_to_dto(job_application)

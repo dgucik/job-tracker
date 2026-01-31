@@ -4,10 +4,10 @@ from uuid import UUID
 from pydantic import BaseModel
 
 from application.ports import CommandHandler, UnitOfWork
-from application.queries.dtos import JobApplicationItemDTO
+from application.dtos import JobApplicationDTO
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.compensation import Compensation, EmploymentType
-from application.mappers.job_application import job_application_to_list_item_dto
+from application.mappers.job_application import job_application_to_dto
 
 
 @dataclass
@@ -20,7 +20,7 @@ class AddCompensationToJobApplicationCommand(BaseModel):
 
 
 class AddCompensationToJobApplicationCommandHandler(
-    CommandHandler[AddCompensationToJobApplicationCommand, JobApplicationItemDTO]
+    CommandHandler[AddCompensationToJobApplicationCommand, JobApplicationDTO]
 ):
     """
     Handler for adding a compensation to a job application.
@@ -34,7 +34,7 @@ class AddCompensationToJobApplicationCommandHandler(
 
     async def execute(
         self, command: AddCompensationToJobApplicationCommand
-    ) -> JobApplicationItemDTO:
+    ) -> JobApplicationDTO:
         compensation = Compensation(
             min_salary=command.min_salary,
             max_salary=command.max_salary,
@@ -51,4 +51,4 @@ class AddCompensationToJobApplicationCommandHandler(
                 )
             job_application.add_compensation(compensation)
             await self._uow.commit()
-        return job_application_to_list_item_dto(job_application)
+        return job_application_to_dto(job_application)
