@@ -1,6 +1,8 @@
 from uuid import UUID
 
+from application.mappers.job_application import job_application_to_list_item_dto
 from application.ports import Command, CommandHandler, UnitOfWork
+from application.queries.dtos import JobApplicationItemDTO
 from domain.exceptions import JobApplicationNotFoundException
 
 
@@ -10,7 +12,7 @@ class UpdateJobApplicationNotesCommand(Command):
 
 
 class UpdateJobApplicationNotesCommandHandler(
-    CommandHandler[UpdateJobApplicationNotesCommand]
+    CommandHandler[UpdateJobApplicationNotesCommand, JobApplicationItemDTO]
 ):
     """
     Handler for updating the notes of a job application.
@@ -22,7 +24,9 @@ class UpdateJobApplicationNotesCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(self, command: UpdateJobApplicationNotesCommand) -> None:
+    async def execute(
+        self, command: UpdateJobApplicationNotesCommand
+    ) -> JobApplicationItemDTO:
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
                 command.job_application_id
@@ -33,3 +37,4 @@ class UpdateJobApplicationNotesCommandHandler(
                 )
             job_application.add_notes(command.notes)
             await self._uow.commit()
+        return job_application_to_list_item_dto(job_application)

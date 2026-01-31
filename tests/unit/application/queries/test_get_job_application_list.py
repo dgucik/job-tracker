@@ -2,7 +2,7 @@ import pytest
 from application.queries.get_job_application_list import (
     GetJobApplicationListQuery,
     GetJobApplicationListQueryHandler,
-    JobApplicationListItemDTO,
+    JobApplicationItemDTO,
 )
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
@@ -54,7 +54,7 @@ async def test_execute_returns_list_of_dtos(handler, uow, sample_job_application
 
     assert len(result) == 1
     dto = result[0]
-    assert isinstance(dto, JobApplicationListItemDTO)
+    assert isinstance(dto, JobApplicationItemDTO)
     assert dto.id == sample_job_application.id
     assert dto.company_name == "Tech Corp"
     assert dto.role_name == "Software Engineer"

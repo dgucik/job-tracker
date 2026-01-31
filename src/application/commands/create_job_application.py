@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 
+from application.mappers.job_application import job_application_to_list_item_dto
 from application.ports import Command, CommandHandler, UnitOfWork
+from application.queries.dtos import JobApplicationItemDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -26,7 +28,9 @@ class CreateJobApplicationCommand(Command):
     notes: str | None = None
 
 
-class CreateJobApplicationCommandHandler(CommandHandler[CreateJobApplicationCommand]):
+class CreateJobApplicationCommandHandler(
+    CommandHandler[CreateJobApplicationCommand, JobApplicationItemDTO]
+):
     """
     Handler for creating a job application.
 
@@ -37,7 +41,9 @@ class CreateJobApplicationCommandHandler(CommandHandler[CreateJobApplicationComm
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(self, command: CreateJobApplicationCommand) -> None:
+    async def execute(
+        self, command: CreateJobApplicationCommand
+    ) -> JobApplicationItemDTO:
         work_location = WorkLocation(
             work_model=WorkModel[command.work_model],
             location=command.work_location,
@@ -63,3 +69,4 @@ class CreateJobApplicationCommandHandler(CommandHandler[CreateJobApplicationComm
         async with self._uow:
             await self._uow.job_applications.add(job_application)
             await self._uow.commit()
+        return job_application_to_list_item_dto(job_application)

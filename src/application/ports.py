@@ -59,7 +59,7 @@ TResult = TypeVar("TResult", covariant=True)
 
 
 # Command and query handlers
-class CommandHandler(Protocol[TCommand]):
+class CommandHandler(Protocol[TCommand, TResult]):
     """
     Handler for executing commands.
 
@@ -67,12 +67,15 @@ class CommandHandler(Protocol[TCommand]):
         _handlers: A dictionary of command types and their handlers.
     """
 
-    async def execute(self, command: TCommand) -> None:
+    async def execute(self, command: TCommand) -> TResult:
         """
         Execute a command.
 
         Args:
             command: The command to execute.
+
+        Returns:
+            The result of the command execution.
         """
         ...
 
@@ -86,7 +89,7 @@ class CommandBus(Protocol):
     """
 
     def register_handler(
-        self, command_type: Type[TCommand], handler: CommandHandler[TCommand]
+        self, command_type: Type[TCommand], handler: CommandHandler[TCommand, TResult]
     ) -> None:
         """
         Register a handler for a command type.
@@ -97,12 +100,15 @@ class CommandBus(Protocol):
         """
         ...
 
-    async def execute(self, command: TCommand) -> None:
+    async def execute(self, command: TCommand) -> TResult:
         """
         Execute a command.
 
         Args:
             command: The command to execute.
+
+        Returns:
+            The result of the command execution.
         """
         ...
 

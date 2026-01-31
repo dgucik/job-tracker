@@ -1,17 +1,16 @@
-from dataclasses import dataclass
 from uuid import UUID
 
+from pydantic import BaseModel
 
-@dataclass
-class CompensationListItemDTO:
+
+class CompensationItemDTO(BaseModel):
     min_salary: int | None
     max_salary: int | None
     currency: str | None
     employment_type: str
 
 
-@dataclass
-class JobApplicationListItemDTO:
+class JobApplicationItemDTO(BaseModel):
     id: UUID
     company_name: str
     role_name: str
@@ -19,5 +18,5 @@ class JobApplicationListItemDTO:
     status: str
     work_model: str
     work_location: str | None
-    compensations: list[CompensationListItemDTO]
+    compensations: list[CompensationItemDTO]
     notes: str | None

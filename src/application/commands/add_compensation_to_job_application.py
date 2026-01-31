@@ -2,8 +2,10 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from application.ports import Command, CommandHandler, UnitOfWork
+from application.queries.dtos import JobApplicationItemDTO
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.compensation import Compensation, EmploymentType
+from application.mappers.job_application import job_application_to_list_item_dto
 
 
 @dataclass
@@ -16,7 +18,7 @@ class AddCompensationToJobApplicationCommand(Command):
 
 
 class AddCompensationToJobApplicationCommandHandler(
-    CommandHandler[AddCompensationToJobApplicationCommand]
+    CommandHandler[AddCompensationToJobApplicationCommand, JobApplicationItemDTO]
 ):
     """
     Handler for adding a compensation to a job application.
@@ -28,7 +30,9 @@ class AddCompensationToJobApplicationCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(self, command: AddCompensationToJobApplicationCommand) -> None:
+    async def execute(
+        self, command: AddCompensationToJobApplicationCommand
+    ) -> JobApplicationItemDTO:
         compensation = Compensation(
             min_salary=command.min_salary,
             max_salary=command.max_salary,
@@ -45,3 +49,4 @@ class AddCompensationToJobApplicationCommandHandler(
                 )
             job_application.add_compensation(compensation)
             await self._uow.commit()
+        return job_application_to_list_item_dto(job_application)
