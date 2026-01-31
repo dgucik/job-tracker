@@ -9,3 +9,10 @@ class SessionNotInitializedException(BaseInfrastructureException):
 
     def __init__(self, message: str = "Database session is not initialized."):
         super().__init__(message)
+
+
+class HandlerNotRegisteredException(BaseInfrastructureException):
+    """Exception raised when a handler is not registered in the system."""
+
+    def __init__(self, handler_type: str = "Handler not registered."):
+        super().__init__(handler_type)
