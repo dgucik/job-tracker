@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from application.ports import CommandHandler, UnitOfWork
+from application.ports import Command, CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -15,7 +15,7 @@ class RawCompensation:
 
 
 @dataclass
-class CreateJobApplicationCommand:
+class CreateJobApplicationCommand(Command):
     company_name: str
     role_name: str
     posting_url: str
@@ -38,12 +38,6 @@ class CreateJobApplicationCommandHandler(CommandHandler[CreateJobApplicationComm
         self._uow = uow
 
     async def execute(self, command: CreateJobApplicationCommand) -> None:
-        """
-        Execute the command.
-
-        Args:
-            command: The command to execute.
-        """
         work_location = WorkLocation(
             work_model=WorkModel[command.work_model],
             location=command.work_location,

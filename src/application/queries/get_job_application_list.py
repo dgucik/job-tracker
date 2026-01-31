@@ -1,32 +1,9 @@
-from dataclasses import dataclass
-from uuid import UUID
-
 from application.mappers.job_application import job_application_to_list_item_dto
-from application.ports import QueryHandler, UnitOfWork
+from application.ports import Query, QueryHandler, UnitOfWork
+from application.queries.dtos import JobApplicationListItemDTO
 
 
-@dataclass
-class CompensationListItemDTO:
-    min_salary: int | None
-    max_salary: int | None
-    currency: str | None
-    employment_type: str
-
-
-@dataclass
-class JobApplicationListItemDTO:
-    id: UUID
-    company_name: str
-    role_name: str
-    posting_url: str
-    status: str
-    work_model: str
-    work_location: str | None
-    compensations: list[CompensationListItemDTO]
-    notes: str | None
-
-
-class GetJobApplicationListQuery:
+class GetJobApplicationListQuery(Query):
     pass
 
 
@@ -46,12 +23,6 @@ class GetJobApplicationListQueryHandler(
     async def execute(
         self, query: GetJobApplicationListQuery
     ) -> list[JobApplicationListItemDTO]:
-        """
-        Execute the query.
-
-        Args:
-            query: The query to execute.
-        """
         async with self._uow:
             job_applications = await self._uow.job_applications.get_all()
         job_application_list_items = [

@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from application.ports import CommandHandler, UnitOfWork
+from application.ports import Command, CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus
 from domain.exceptions import JobApplicationNotFoundException
 
 
 @dataclass
-class UpdateJobApplicationStatusCommand:
+class UpdateJobApplicationStatusCommand(Command):
     job_application_id: UUID
     new_status: str
 
@@ -26,12 +26,6 @@ class UpdateJobApplicationStatusCommandHandler(
         self._uow = uow
 
     async def execute(self, command: UpdateJobApplicationStatusCommand) -> None:
-        """
-        Execute the command.
-
-        Args:
-            command: The command to execute.
-        """
         status = ApplicationStatus(command.new_status)
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(

@@ -1,13 +1,13 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from application.ports import CommandHandler, UnitOfWork
+from application.ports import Command, CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.compensation import Compensation, EmploymentType
 
 
 @dataclass
-class AddCompensationToJobApplicationCommand:
+class AddCompensationToJobApplicationCommand(Command):
     job_application_id: UUID
     min_salary: int | None
     max_salary: int | None
@@ -29,12 +29,6 @@ class AddCompensationToJobApplicationCommandHandler(
         self._uow = uow
 
     async def execute(self, command: AddCompensationToJobApplicationCommand) -> None:
-        """
-        Execute the command.
-
-        Args:
-            command: The command to execute.
-        """
         compensation = Compensation(
             min_salary=command.min_salary,
             max_salary=command.max_salary,

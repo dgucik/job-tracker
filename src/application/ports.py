@@ -5,6 +5,13 @@ from domain.repositories import JobApplicationRepository
 
 
 class UnitOfWork(Protocol):
+    """
+    Unit of work for the application.
+
+    Attributes:
+        job_applications: The repository for job applications.
+    """
+
     job_applications: JobApplicationRepository
 
     async def __aenter__(self) -> "UnitOfWork": ...
@@ -30,8 +37,24 @@ class UnitOfWork(Protocol):
 
 
 # Type variables for command and query handlers
-TCommand = TypeVar("TCommand", contravariant=True)
-TQuery = TypeVar("TQuery", contravariant=True)
+class Command(Protocol):
+    """
+    Command for the application.
+    """
+
+    ...
+
+
+class Query(Protocol):
+    """
+    Query for the application.
+    """
+
+    ...
+
+
+TCommand = TypeVar("TCommand", bound=Command, contravariant=True)
+TQuery = TypeVar("TQuery", bound=Query, contravariant=True)
 TResult = TypeVar("TResult", covariant=True)
 
 

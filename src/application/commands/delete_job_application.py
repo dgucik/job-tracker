@@ -1,9 +1,9 @@
 from uuid import UUID
-from application.ports import CommandHandler, UnitOfWork
+from application.ports import Command, CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
 
 
-class DeleteJobApplicationCommand:
+class DeleteJobApplicationCommand(Command):
     job_application_id: UUID
 
 
@@ -19,12 +19,6 @@ class DeleteJobApplicationCommandHandler(CommandHandler[DeleteJobApplicationComm
         self._uow = uow
 
     async def execute(self, command: DeleteJobApplicationCommand) -> None:
-        """
-        Execute the command.
-
-        Args:
-            command: The command to execute.
-        """
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
                 command.job_application_id

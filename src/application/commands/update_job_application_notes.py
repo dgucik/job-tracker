@@ -1,10 +1,10 @@
 from uuid import UUID
 
-from application.ports import CommandHandler, UnitOfWork
+from application.ports import Command, CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
 
 
-class UpdateJobApplicationNotesCommand:
+class UpdateJobApplicationNotesCommand(Command):
     job_application_id: UUID
     notes: str
 
@@ -23,12 +23,6 @@ class UpdateJobApplicationNotesCommandHandler(
         self._uow = uow
 
     async def execute(self, command: UpdateJobApplicationNotesCommand) -> None:
-        """
-        Execute the command.
-
-        Args:
-            command: The command to execute.
-        """
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
                 command.job_application_id
