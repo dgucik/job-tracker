@@ -2,7 +2,6 @@ from types import TracebackType
 from application.ports import UnitOfWork
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker
 
-from domain.repositories import JobApplicationRepository
 from infrastructure.db.repositories import SqlAlchemyJobApplicationRepository
 from infrastructure.exceptions import SessionNotInitializedException
 
@@ -11,7 +10,6 @@ class SqlAlchemyUnitOfWork(UnitOfWork):
     def __init__(self, session_factory: async_sessionmaker[AsyncSession]) -> None:
         self._session_factory = session_factory
         self._session: AsyncSession | None = None
-        self.job_applications: JobApplicationRepository | None = None
 
     async def __aenter__(self) -> "UnitOfWork":
         self._session = self._session_factory()

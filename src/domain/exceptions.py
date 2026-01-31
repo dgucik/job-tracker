@@ -28,11 +28,19 @@ class CompensationException(BaseDomainException):
         super().__init__(self.message)
 
 
-class CurrencyNotProvidedException(CompensationException):
+class CurrencyNotProvidedException(BaseDomainException):
     """Exception raised when currency is not provided with salary values."""
 
     def __init__(
         self, message: str = "Currency must be provided if salary values are specified."
     ) -> None:
+        self.message = message
+        super().__init__(self.message)
+
+
+class JobApplicationNotFoundException(BaseDomainException):
+    """Exception raised when a job application is not found."""
+
+    def __init__(self, message: str = "Job application not found.") -> None:
         self.message = message
         super().__init__(self.message)

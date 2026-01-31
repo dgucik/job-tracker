@@ -5,7 +5,7 @@ from domain.repositories import JobApplicationRepository
 
 
 class UnitOfWork(Protocol):
-    job_applications: JobApplicationRepository | None
+    job_applications: JobApplicationRepository
 
     async def __aenter__(self) -> "UnitOfWork": ...
 
