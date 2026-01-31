@@ -33,12 +33,25 @@ class GetJobApplicationListQuery:
 class GetJobApplicationListQueryHandler(
     QueryHandler[GetJobApplicationListQuery, list[JobApplicationListItemDTO]]
 ):
+    """
+    Handler for getting a list of job applications.
+
+    Attributes:\
+        _uow: The unit of work to use to access the database.
+    """
+
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
     async def execute(
         self, query: GetJobApplicationListQuery
     ) -> list[JobApplicationListItemDTO]:
+        """
+        Execute the query.
+
+        Args:
+            query: The query to execute.
+        """
         async with self._uow:
             job_applications = await self._uow.job_applications.get_all()
         job_application_list_items = [

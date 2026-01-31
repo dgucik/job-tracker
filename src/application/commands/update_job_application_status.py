@@ -15,10 +15,23 @@ class UpdateJobApplicationStatusCommand:
 class UpdateJobApplicationStatusCommandHandler(
     CommandHandler[UpdateJobApplicationStatusCommand]
 ):
+    """
+    Handler for updating the status of a job application.
+
+    Attributes:
+        _uow: The unit of work to use to access the database.
+    """
+
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
     async def execute(self, command: UpdateJobApplicationStatusCommand) -> None:
+        """
+        Execute the command.
+
+        Args:
+            command: The command to execute.
+        """
         status = ApplicationStatus(command.new_status)
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(

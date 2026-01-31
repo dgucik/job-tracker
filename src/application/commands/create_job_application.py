@@ -27,10 +27,23 @@ class CreateJobApplicationCommand:
 
 
 class CreateJobApplicationCommandHandler(CommandHandler[CreateJobApplicationCommand]):
+    """
+    Handler for creating a job application.
+
+    Attributes:
+        _uow: The unit of work to use to access the database.
+    """
+
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
     async def execute(self, command: CreateJobApplicationCommand) -> None:
+        """
+        Execute the command.
+
+        Args:
+            command: The command to execute.
+        """
         work_location = WorkLocation(
             work_model=WorkModel[command.work_model],
             location=command.work_location,

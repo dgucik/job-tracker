@@ -18,10 +18,23 @@ class AddCompensationToJobApplicationCommand:
 class AddCompensationToJobApplicationCommandHandler(
     CommandHandler[AddCompensationToJobApplicationCommand]
 ):
+    """
+    Handler for adding a compensation to a job application.
+
+    Attributes:
+        _uow: The unit of work to use to access the database.
+    """
+
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
     async def execute(self, command: AddCompensationToJobApplicationCommand) -> None:
+        """
+        Execute the command.
+
+        Args:
+            command: The command to execute.
+        """
         compensation = Compensation(
             min_salary=command.min_salary,
             max_salary=command.max_salary,
