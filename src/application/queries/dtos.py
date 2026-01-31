@@ -1,6 +1,9 @@
 from uuid import UUID
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+
+from domain.entities.job_application import ApplicationStatus
+from domain.value_objects.work_location import WorkModel
 
 
 class CompensationItemDTO(BaseModel):
@@ -12,11 +15,11 @@ class CompensationItemDTO(BaseModel):
 
 class JobApplicationItemDTO(BaseModel):
     id: UUID
-    company_name: str
-    role_name: str
-    posting_url: str
-    status: str
-    work_model: str
-    work_location: str | None
-    compensations: list[CompensationItemDTO]
-    notes: str | None
+    company_name: str = Field(min_length=1, max_length=255, examples=["Google"])
+    role_name: str = Field(min_length=1, max_length=255, examples=["Software Engineer"])
+    posting_url: str = Field(examples=["https://www.google.com"])
+    status: ApplicationStatus
+    work_model: WorkModel
+    work_location: str | None = Field(default=None, examples=["Warsaw"])
+    compensations: list[CompensationItemDTO] = Field(default_factory=list)
+    notes: str | None = Field(default=None, examples=["Exciting opportunity"])

@@ -1,9 +1,11 @@
 from uuid import UUID
-from application.ports import Command, CommandHandler, UnitOfWork
+
+from pydantic import BaseModel
+from application.ports import CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
 
 
-class DeleteJobApplicationCommand(Command):
+class DeleteJobApplicationCommand(BaseModel):
     job_application_id: UUID
 
 

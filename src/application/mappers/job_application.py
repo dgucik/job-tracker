@@ -14,8 +14,8 @@ def job_application_to_list_item_dto(
         company_name=entity.company_name,
         role_name=entity.role_name,
         posting_url=entity.posting_url,
-        status=entity.status.value,
-        work_model=entity.work_location.work_model.name,
+        status=entity.status,
+        work_model=entity.work_location.work_model,
         work_location=entity.work_location.location,
         compensations=[
             CompensationItemDTO(

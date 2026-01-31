@@ -1,7 +1,9 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from application.ports import Command, CommandHandler, UnitOfWork
+from pydantic import BaseModel
+
+from application.ports import CommandHandler, UnitOfWork
 from application.queries.dtos import JobApplicationItemDTO
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.compensation import Compensation, EmploymentType
@@ -9,7 +11,7 @@ from application.mappers.job_application import job_application_to_list_item_dto
 
 
 @dataclass
-class AddCompensationToJobApplicationCommand(Command):
+class AddCompensationToJobApplicationCommand(BaseModel):
     job_application_id: UUID
     min_salary: int | None
     max_salary: int | None

@@ -1,12 +1,14 @@
 from uuid import UUID
 
+from pydantic import BaseModel
+
 from application.mappers.job_application import job_application_to_list_item_dto
-from application.ports import Command, CommandHandler, UnitOfWork
+from application.ports import CommandHandler, UnitOfWork
 from application.queries.dtos import JobApplicationItemDTO
 from domain.exceptions import JobApplicationNotFoundException
 
 
-class UpdateJobApplicationNotesCommand(Command):
+class UpdateJobApplicationNotesCommand(BaseModel):
     job_application_id: UUID
     notes: str
 

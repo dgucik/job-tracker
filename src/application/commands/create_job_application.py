@@ -1,28 +1,26 @@
-from dataclasses import dataclass
+from pydantic import BaseModel
 
 from application.mappers.job_application import job_application_to_list_item_dto
-from application.ports import Command, CommandHandler, UnitOfWork
+from application.ports import CommandHandler, UnitOfWork
 from application.queries.dtos import JobApplicationItemDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
 
 
-@dataclass
-class RawCompensation:
+class RawCompensation(BaseModel):
     min_salary: int | None
     max_salary: int | None
     currency: str | None
     employment_type: str
 
 
-@dataclass
-class CreateJobApplicationCommand(Command):
+class CreateJobApplicationCommand(BaseModel):
     company_name: str
     role_name: str
     posting_url: str
     status: str
-    work_model: str
+    work_model: WorkModel
     work_location: str | None
     compensations: list[RawCompensation]
     notes: str | None = None
@@ -45,7 +43,7 @@ class CreateJobApplicationCommandHandler(
         self, command: CreateJobApplicationCommand
     ) -> JobApplicationItemDTO:
         work_location = WorkLocation(
-            work_model=WorkModel[command.work_model],
+            work_model=command.work_model,
             location=command.work_location,
         )
         compensations = [

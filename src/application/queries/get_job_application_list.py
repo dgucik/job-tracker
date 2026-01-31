@@ -1,9 +1,10 @@
+from pydantic import BaseModel
 from application.mappers.job_application import job_application_to_list_item_dto
-from application.ports import Query, QueryHandler, UnitOfWork
+from application.ports import QueryHandler, UnitOfWork
 from application.queries.dtos import JobApplicationItemDTO
 
 
-class GetJobApplicationListQuery(Query):
+class GetJobApplicationListQuery(BaseModel):
     pass
 
 

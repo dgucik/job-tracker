@@ -37,24 +37,10 @@ class UnitOfWork(Protocol):
 
 
 # Type variables for command and query handlers
-class Command(Protocol):
-    """
-    Command for the application.
-    """
-
-    ...
 
 
-class Query(Protocol):
-    """
-    Query for the application.
-    """
-
-    ...
-
-
-TCommand = TypeVar("TCommand", bound=Command, contravariant=True)
-TQuery = TypeVar("TQuery", bound=Query, contravariant=True)
+TCommand = TypeVar("TCommand", contravariant=True)
+TQuery = TypeVar("TQuery", contravariant=True)
 TResult = TypeVar("TResult", covariant=True)
 
 
