@@ -39,12 +39,12 @@ class CommandBus(Protocol):
     async def execute(self, command: TCommand) -> None: ...
 
 
-class QueryHandler(Protocol[TQuery]):
+class QueryHandler(Protocol[TQuery, TResult]):
     async def execute(self, query: TQuery) -> TResult: ...
 
 
 class QueryBus(Protocol):
     def register_handler(
-        self, query_type: Type[TQuery], handler: QueryHandler[TQuery]
+        self, query_type: Type[TQuery], handler: QueryHandler[TQuery, TResult]
     ) -> None: ...
     async def execute(self, query: TQuery) -> TResult: ...

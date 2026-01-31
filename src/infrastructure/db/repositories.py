@@ -24,6 +24,16 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         model = self._to_model(entity)
         self._session.add(model)
 
+    async def get_all(self) -> list[JobApplication]:
+        """
+        Retrieves all JobApplication entities from the database.
+
+        Returns:
+            A list of JobApplication entities.
+        """
+        stmt = select(JobApplicationModel)
+        return await self._execute_many(stmt)
+
     async def get_by_id(self, id: UUID) -> JobApplication | None:
         """
         Retrieves a JobApplication entity by its ID.
@@ -35,7 +45,7 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
             The JobApplication entity if found, else None.
         """
         stmt = select(JobApplicationModel).where(JobApplicationModel.id == id)
-        return await self._execute(stmt)
+        return await self._execute_scalar(stmt)
 
     async def update(self, entity: JobApplication) -> None:
         """
@@ -101,7 +111,12 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         )
         return model
 
-    async def _execute(self, stmt: Select[Any]) -> JobApplication | None:
+    async def _execute_scalar(self, stmt: Select[Any]) -> JobApplication | None:
         result: Result[Any] = await self._session.execute(stmt)
         model = result.scalar_one_or_none()
         return self._to_domain(model) if model else None
+
+    async def _execute_many(self, stmt: Select[Any]) -> list[JobApplication]:
+        result: Result[Any] = await self._session.execute(stmt)
+        models = result.scalars().all()
+        return [self._to_domain(model) for model in models]

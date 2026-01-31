@@ -1,6 +1,6 @@
 from collections.abc import Generator
 from infrastructure.db.session import AsyncSessionLocal
-from infrastructure.db.unit_of_work import SqlAlchemyUnitOfWork
+from infrastructure.db.uow import SqlAlchemyUnitOfWork
 
 
 def get_unit_of_work() -> Generator[SqlAlchemyUnitOfWork, None]:
