@@ -36,3 +36,11 @@ class CreateJobApplicationRequest(BaseModel):
     notes: str | None = Field(
         default=None, examples=["Exciting opportunity"], alias="notes"
     )
+
+
+class UpdateJobApplicationStatusRequest(BaseModel):
+    status: STATUS_VALUES = Field(examples=["APPLIED"], alias="status")
+
+
+class UpdateJobApplicationNotesRequest(BaseModel):
+    notes: str = Field(examples=["Exciting opportunity"], alias="notes")

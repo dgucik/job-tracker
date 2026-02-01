@@ -39,7 +39,7 @@ async def test_execute_updates_status_and_commits(
 
     command = UpdateJobApplicationStatusCommand(
         job_application_id=app_id,
-        new_status="INTERVIEWED",
+        status="INTERVIEWED",
     )
 
     result = await handler.execute(command)
@@ -59,7 +59,7 @@ async def test_execute_raises_when_application_not_found(handler, uow):
 
     command = UpdateJobApplicationStatusCommand(
         job_application_id=app_id,
-        new_status="OFFERED",
+        status="OFFERED",
     )
 
     with pytest.raises(JobApplicationNotFoundException) as exc_info:
@@ -75,7 +75,7 @@ async def test_execute_updates_to_rejected(handler, uow, existing_job_applicatio
 
     command = UpdateJobApplicationStatusCommand(
         job_application_id=existing_job_application.id,
-        new_status="REJECTED",
+        status="REJECTED",
     )
 
     result = await handler.execute(command)

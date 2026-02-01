@@ -9,7 +9,7 @@ from domain.exceptions import JobApplicationNotFoundException
 @dataclass
 class UpdateJobApplicationStatusCommand:
     job_application_id: UUID
-    new_status: str
+    status: str
 
 
 class UpdateJobApplicationStatusCommandHandler(
@@ -26,7 +26,7 @@ class UpdateJobApplicationStatusCommandHandler(
         self._uow = uow
 
     async def execute(self, command: UpdateJobApplicationStatusCommand) -> UUID:
-        status = ApplicationStatus(command.new_status)
+        status = ApplicationStatus(command.status)
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
                 command.job_application_id

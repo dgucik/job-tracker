@@ -6,10 +6,21 @@ from api.mappers import (
     job_application_dto_to_response,
     job_application_request_to_command,
 )
-from api.schemas.requests import CreateJobApplicationRequest
+from api.schemas.requests import (
+    CreateJobApplicationRequest,
+    UpdateJobApplicationNotesRequest,
+    UpdateJobApplicationStatusRequest,
+)
 from api.schemas.responses import (
     JobApplicationIdResponse,
     JobApplicationListItemResponse,
+)
+from application.commands.delete_job_application import DeleteJobApplicationCommand
+from application.commands.update_job_application_notes import (
+    UpdateJobApplicationNotesCommand,
+)
+from application.commands.update_job_application_status import (
+    UpdateJobApplicationStatusCommand,
 )
 from application.ports import CommandBus, QueryBus
 from application.queries.dtos import JobApplicationListItemDTO
@@ -43,5 +54,52 @@ async def create_job_application(
     command_bus: CommandBus = Depends(get_command_bus),
 ) -> JobApplicationIdResponse:
     command: CreateJobApplicationCommand = job_application_request_to_command(body)
-    job_application_id: UUID = await command_bus.execute(command)
-    return JobApplicationIdResponse(id=job_application_id)
+    created_job_application_id: UUID = await command_bus.execute(command)
+    return JobApplicationIdResponse(id=created_job_application_id)
+
+
+@router.delete(
+    "/{job_application_id}",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
+async def delete_job_application(
+    job_application_id: UUID,
+    command_bus: CommandBus = Depends(get_command_bus),
+) -> None:
+    command = DeleteJobApplicationCommand(job_application_id=job_application_id)
+    await command_bus.execute(command)
+    return None
+
+
+@router.put(
+    "/{job_application_id}/status",
+    status_code=status.HTTP_200_OK,
+    response_model=JobApplicationIdResponse,
+)
+async def update_job_application_status(
+    job_application_id: UUID,
+    body: UpdateJobApplicationStatusRequest = Body(...),
+    command_bus: CommandBus = Depends(get_command_bus),
+) -> JobApplicationIdResponse:
+    command = UpdateJobApplicationStatusCommand(
+        job_application_id=job_application_id, status=body.status
+    )
+    updated_job_application_id: UUID = await command_bus.execute(command)
+    return JobApplicationIdResponse(id=updated_job_application_id)
+
+
+@router.put(
+    "/{job_application_id}/notes",
+    status_code=status.HTTP_200_OK,
+    response_model=JobApplicationIdResponse,
+)
+async def update_job_application_notes(
+    job_application_id: UUID,
+    body: UpdateJobApplicationNotesRequest = Body(...),
+    command_bus: CommandBus = Depends(get_command_bus),
+) -> JobApplicationIdResponse:
+    command = UpdateJobApplicationNotesCommand(
+        job_application_id=job_application_id, notes=body.notes
+    )
+    updated_job_application_id: UUID = await command_bus.execute(command)
+    return JobApplicationIdResponse(id=updated_job_application_id)
