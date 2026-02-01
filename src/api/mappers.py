@@ -1,19 +1,19 @@
 from api.schemas.requests import CreateJobApplicationRequest
 from api.schemas.responses import (
-    CompensationListItemResponse,
-    JobApplicationListItemResponse,
+    CompensationResponse,
+    JobApplicationResponse,
 )
 from application.commands.create_job_application import (
     CreateJobApplicationCommand,
     RawCompensation,
 )
-from application.queries.dtos import JobApplicationListItemDTO
+from application.queries.dtos import JobApplicationDTO
 
 
 def job_application_dto_to_response(
-    dto: JobApplicationListItemDTO,
-) -> JobApplicationListItemResponse:
-    return JobApplicationListItemResponse(
+    dto: JobApplicationDTO,
+) -> JobApplicationResponse:
+    return JobApplicationResponse(
         id=dto.id,
         company_name=dto.company_name,
         role_name=dto.role_name,
@@ -22,7 +22,7 @@ def job_application_dto_to_response(
         work_model=dto.work_model,
         work_location=dto.work_location,
         compensations=[
-            CompensationListItemResponse(
+            CompensationResponse(
                 min_salary=c.min_salary,
                 max_salary=c.max_salary,
                 currency=c.currency,

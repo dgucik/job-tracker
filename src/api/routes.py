@@ -13,7 +13,7 @@ from api.schemas.requests import (
 )
 from api.schemas.responses import (
     JobApplicationIdResponse,
-    JobApplicationListItemResponse,
+    JobApplicationResponse,
 )
 from application.commands.delete_job_application import DeleteJobApplicationCommand
 from application.commands.update_job_application_notes import (
@@ -23,7 +23,7 @@ from application.commands.update_job_application_status import (
     UpdateJobApplicationStatusCommand,
 )
 from application.ports import CommandBus, QueryBus
-from application.queries.dtos import JobApplicationListItemDTO
+from application.queries.dtos import JobApplicationDTO
 from application.queries.get_job_application_list import GetJobApplicationListQuery
 from api.dependencies.query_bus import get_query_bus
 from application.commands.create_job_application import CreateJobApplicationCommand
@@ -34,13 +34,13 @@ router = APIRouter()
 @router.get(
     "/",
     status_code=status.HTTP_200_OK,
-    response_model=list[JobApplicationListItemResponse],
+    response_model=list[JobApplicationResponse],
 )
 async def get_job_application_list(
     query_bus: QueryBus = Depends(get_query_bus),
-) -> list[JobApplicationListItemResponse]:
+) -> list[JobApplicationResponse]:
     query = GetJobApplicationListQuery()
-    dtos: list[JobApplicationListItemDTO] = await query_bus.execute(query)
+    dtos: list[JobApplicationDTO] = await query_bus.execute(query)
     return [job_application_dto_to_response(dto) for dto in dtos]
 
 

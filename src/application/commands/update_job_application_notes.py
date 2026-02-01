@@ -35,5 +35,6 @@ class UpdateJobApplicationNotesCommandHandler(
                     f"Job application with id {command.job_application_id} not found"
                 )
             job_application.add_notes(command.notes)
+            await self._uow.job_applications.update(job_application)
             await self._uow.commit()
         return job_application.id

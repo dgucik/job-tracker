@@ -16,3 +16,9 @@ class HandlerNotRegisteredException(BaseInfrastructureException):
 
     def __init__(self, handler_type: str = "Handler not registered."):
         super().__init__(handler_type)
+
+
+class EntityNotFoundError(BaseInfrastructureException):
+    """Exception raised when an entity is not found in the persistence layer."""
+
+    pass

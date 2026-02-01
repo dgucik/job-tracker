@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from uuid import UUID
 
 from application.ports import CommandHandler, UnitOfWork
+from domain.exceptions import JobApplicationNotFoundException
 
 
 @dataclass
@@ -24,6 +25,13 @@ class DeleteJobApplicationCommandHandler(
 
     async def execute(self, command: DeleteJobApplicationCommand) -> None:
         async with self._uow:
-            await self._uow.job_applications.delete(command.job_application_id)
+            job_application = await self._uow.job_applications.get_by_id(
+                command.job_application_id
+            )
+            if job_application is None:
+                raise JobApplicationNotFoundException(
+                    f"Job application with id {command.job_application_id} not found"
+                )
+            await self._uow.job_applications.delete(job_application)
             await self._uow.commit()
         return None

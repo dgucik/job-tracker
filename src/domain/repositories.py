@@ -49,11 +49,11 @@ class JobApplicationRepository(Protocol):
         """
         ...
 
-    async def delete(self, id: UUID) -> None:
+    async def delete(self, entity: JobApplication) -> None:
         """
         Delete a JobApplication entity from the repository.
 
         Args:
-            id: The UUID of the JobApplication to delete.
+            entity: The JobApplication instance to delete.
         """
         ...

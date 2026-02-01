@@ -36,5 +36,6 @@ class UpdateJobApplicationStatusCommandHandler(
                     f"Job application with id {command.job_application_id} not found"
                 )
             job_application.update_status(status)
+            await self._uow.job_applications.update(job_application)
             await self._uow.commit()
         return job_application.id

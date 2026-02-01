@@ -3,7 +3,7 @@ from uuid import UUID
 from pydantic import BaseModel, ConfigDict, Field
 
 
-class CompensationListItemResponse(BaseModel):
+class CompensationResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     min_salary: int | None = Field(examples=[5000], alias="minSalary")
@@ -18,7 +18,7 @@ class JobApplicationIdResponse(BaseModel):
     id: UUID = Field(examples=["54adc89e-6055-425a-ba3a-ccf3125ce501"])
 
 
-class JobApplicationListItemResponse(BaseModel):
+class JobApplicationResponse(BaseModel):
     model_config = ConfigDict(populate_by_name=True)
 
     id: UUID
@@ -34,7 +34,7 @@ class JobApplicationListItemResponse(BaseModel):
     work_location: str | None = Field(
         default=None, examples=["Warsaw"], alias="workLocation"
     )
-    compensations: list[CompensationListItemResponse] = Field(
+    compensations: list[CompensationResponse] = Field(
         default_factory=list, alias="compensations"
     )
     notes: str | None = Field(

@@ -3,7 +3,7 @@ from uuid import UUID
 
 
 @dataclass
-class CompensationListItemDTO:
+class CompensationDTO:
     min_salary: int | None
     max_salary: int | None
     currency: str | None
@@ -11,7 +11,7 @@ class CompensationListItemDTO:
 
 
 @dataclass
-class JobApplicationListItemDTO:
+class JobApplicationDTO:
     id: UUID
     company_name: str
     role_name: str
@@ -19,5 +19,5 @@ class JobApplicationListItemDTO:
     status: str
     work_model: str
     work_location: str | None
-    compensations: list[CompensationListItemDTO]
+    compensations: list[CompensationDTO]
     notes: str | None

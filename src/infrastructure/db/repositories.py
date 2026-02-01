@@ -1,8 +1,8 @@
 from typing import Any
 from uuid import UUID
 from domain.entities.job_application import JobApplication
-from domain.exceptions import JobApplicationNotFoundException
 from domain.repositories import JobApplicationRepository
+from infrastructure.exceptions import EntityNotFoundError
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Result, Select, select
 from sqlalchemy.orm import selectinload
@@ -35,21 +35,11 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         return await self._execute_scalar(stmt)
 
     async def update(self, entity: JobApplication) -> None:
-        model = self._to_model(entity)
-        await self._session.merge(model)
+        model = await self._get_model_or_raise(entity.id)
+        self._apply_entity_to_model(model, entity)
 
-    async def delete(self, id: UUID) -> None:
-        stmt = (
-            select(JobApplicationModel)
-            .where(JobApplicationModel.id == id)
-            .options(selectinload(JobApplicationModel.compensations))
-        )
-        result: Result[Any] = await self._session.execute(stmt)
-        model = result.scalar_one_or_none()
-        if model is None:
-            raise JobApplicationNotFoundException(
-                f"Job application with id {id} not found"
-            )
+    async def delete(self, entity: JobApplication) -> None:
+        model = await self._get_model_or_raise(entity.id)
         await self._session.delete(model)
 
     def _to_domain(self, model: JobApplicationModel) -> JobApplication:
@@ -95,6 +85,23 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
             ],
             notes=entity.notes,
         )
+        return model
+
+    def _apply_entity_to_model(
+        self, model: JobApplicationModel, entity: JobApplication
+    ) -> None:
+        model.company_name = entity.company_name
+        model.role_name = entity.role_name
+        model.posting_url = entity.posting_url
+        model.status = entity.status
+        model.work_model = entity.work_location.work_model
+        model.location = entity.work_location.location
+        model.notes = entity.notes
+
+    async def _get_model_or_raise(self, id: UUID) -> JobApplicationModel:
+        model = await self._session.get(JobApplicationModel, id)
+        if model is None:
+            raise EntityNotFoundError(f"Job application with id {id} not found")
         return model
 
     async def _execute_scalar(self, stmt: Select[Any]) -> JobApplication | None:

@@ -33,12 +33,14 @@ async def test_execute_deletes_application_and_commits(
     handler, uow, existing_job_application
 ):
     app_id = existing_job_application.id
+    uow.job_applications.get_by_id.return_value = existing_job_application
 
     command = DeleteJobApplicationCommand(job_application_id=app_id)
 
     result = await handler.execute(command)
 
-    uow.job_applications.delete.assert_called_once_with(app_id)
+    uow.job_applications.get_by_id.assert_called_once_with(app_id)
+    uow.job_applications.delete.assert_called_once_with(existing_job_application)
     uow.commit.assert_called_once()
 
     assert result is None
@@ -47,9 +49,7 @@ async def test_execute_deletes_application_and_commits(
 @pytest.mark.asyncio
 async def test_execute_raises_when_application_not_found(handler, uow):
     app_id = uuid4()
-    uow.job_applications.delete.side_effect = JobApplicationNotFoundException(
-        f"Job application with id {app_id} not found"
-    )
+    uow.job_applications.get_by_id.return_value = None
 
     command = DeleteJobApplicationCommand(job_application_id=app_id)
 
@@ -57,5 +57,6 @@ async def test_execute_raises_when_application_not_found(handler, uow):
         await handler.execute(command)
 
     assert str(app_id) in str(exc_info.value)
-    uow.job_applications.delete.assert_called_once_with(app_id)
+    uow.job_applications.get_by_id.assert_called_once_with(app_id)
+    uow.job_applications.delete.assert_not_called()
     uow.commit.assert_not_called()

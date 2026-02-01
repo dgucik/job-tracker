@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from application.queries.mappers import job_application_entity_to_dto
 from application.ports import QueryHandler, UnitOfWork
-from application.queries.dtos import JobApplicationListItemDTO
+from application.queries.dtos import JobApplicationDTO
 
 
 @dataclass
@@ -10,7 +10,7 @@ class GetJobApplicationListQuery:
 
 
 class GetJobApplicationListQueryHandler(
-    QueryHandler[GetJobApplicationListQuery, list[JobApplicationListItemDTO]]
+    QueryHandler[GetJobApplicationListQuery, list[JobApplicationDTO]]
 ):
     """
     Handler for getting a list of job applications.
@@ -24,7 +24,7 @@ class GetJobApplicationListQueryHandler(
 
     async def execute(
         self, query: GetJobApplicationListQuery
-    ) -> list[JobApplicationListItemDTO]:
+    ) -> list[JobApplicationDTO]:
         async with self._uow:
             job_applications = await self._uow.job_applications.get_all()
         job_application_list_items = [
