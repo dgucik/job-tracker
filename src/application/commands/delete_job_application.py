@@ -1,11 +1,12 @@
-from uuid import UUID, uuid4
+from dataclasses import dataclass
+from uuid import UUID
 
-from pydantic import BaseModel, Field
 from application.ports import CommandHandler, UnitOfWork
 
 
-class DeleteJobApplicationCommand(BaseModel):
-    job_application_id: UUID = Field(examples=[uuid4()])
+@dataclass
+class DeleteJobApplicationCommand:
+    job_application_id: UUID
 
 
 class DeleteJobApplicationCommandHandler(

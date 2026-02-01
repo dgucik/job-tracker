@@ -1,10 +1,11 @@
-from pydantic import BaseModel
+from dataclasses import dataclass
 from application.queries.mappers import job_application_entity_to_dto
 from application.ports import QueryHandler, UnitOfWork
 from application.queries.dtos import JobApplicationListItemDTO
 
 
-class GetJobApplicationListQuery(BaseModel):
+@dataclass
+class GetJobApplicationListQuery:
     pass
 
 
@@ -14,7 +15,7 @@ class GetJobApplicationListQueryHandler(
     """
     Handler for getting a list of job applications.
 
-    Attributes:\
+    Attributes:
         _uow: The unit of work to use to access the database.
     """
 

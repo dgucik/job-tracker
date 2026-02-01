@@ -1,14 +1,15 @@
-from uuid import UUID, uuid4
+from dataclasses import dataclass
+from uuid import UUID
 
 from application.ports import CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus
 from domain.exceptions import JobApplicationNotFoundException
-from pydantic import BaseModel, Field
 
 
-class UpdateJobApplicationStatusCommand(BaseModel):
-    job_application_id: UUID = Field(examples=[uuid4()])
-    new_status: str = Field(examples=["APPLIED"])
+@dataclass
+class UpdateJobApplicationStatusCommand:
+    job_application_id: UUID
+    new_status: str
 
 
 class UpdateJobApplicationStatusCommandHandler(
