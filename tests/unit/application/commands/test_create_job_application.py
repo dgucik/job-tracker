@@ -5,7 +5,8 @@ from application.commands.create_job_application import (
     CreateJobApplicationCommandHandler,
     RawCompensation,
 )
-from application.queries.dtos import JobApplicationDTO
+from uuid import UUID
+
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import EmploymentType
 from domain.value_objects.work_location import WorkModel
@@ -44,10 +45,9 @@ async def test_execute_creates_job_application_and_adds_to_repository(
     result = await handler.execute(valid_command)
 
     uow.job_applications.add.assert_called_once()
-    assert isinstance(result, JobApplicationDTO)
-    assert result.company_name == "Tech Corp"
-    assert result.role_name == "Software Engineer"
+    assert isinstance(result, UUID)
     call_arg = uow.job_applications.add.call_args[0][0]
+    assert result == call_arg.id
     assert isinstance(call_arg, JobApplication)
     assert call_arg.company_name == "Tech Corp"
     assert call_arg.role_name == "Software Engineer"
@@ -68,7 +68,7 @@ async def test_execute_commits_transaction(handler, uow, valid_command):
     result = await handler.execute(valid_command)
 
     uow.commit.assert_called_once()
-    assert isinstance(result, JobApplicationDTO)
+    assert isinstance(result, UUID)
 
 
 @pytest.mark.asyncio

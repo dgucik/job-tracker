@@ -5,7 +5,8 @@ from application.commands.update_job_application_status import (
     UpdateJobApplicationStatusCommand,
     UpdateJobApplicationStatusCommandHandler,
 )
-from application.queries.dtos import JobApplicationDTO
+from uuid import UUID
+
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -47,9 +48,8 @@ async def test_execute_updates_status_and_commits(
     assert existing_job_application.status == ApplicationStatus.INTERVIEWED
     uow.commit.assert_called_once()
 
-    assert isinstance(result, JobApplicationDTO)
-    assert result.id == app_id
-    assert result.status == ApplicationStatus.INTERVIEWED
+    assert isinstance(result, UUID)
+    assert result == app_id
 
 
 @pytest.mark.asyncio
@@ -81,4 +81,5 @@ async def test_execute_updates_to_rejected(handler, uow, existing_job_applicatio
     result = await handler.execute(command)
 
     assert existing_job_application.status == ApplicationStatus.REJECTED
-    assert result.status == ApplicationStatus.REJECTED
+    assert isinstance(result, UUID)
+    assert result == existing_job_application.id

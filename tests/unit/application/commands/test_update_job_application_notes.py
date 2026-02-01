@@ -5,7 +5,8 @@ from application.commands.update_job_application_notes import (
     UpdateJobApplicationNotesCommand,
     UpdateJobApplicationNotesCommandHandler,
 )
-from application.queries.dtos import JobApplicationDTO
+from uuid import UUID
+
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.work_location import WorkLocation, WorkModel
@@ -47,8 +48,8 @@ async def test_execute_updates_notes_and_commits(
     assert job_application_with_notes.notes == "Updated notes after interview"
     uow.commit.assert_called_once()
 
-    assert isinstance(result, JobApplicationDTO)
-    assert result.notes == "Updated notes after interview"
+    assert isinstance(result, UUID)
+    assert result == app_id
 
 
 @pytest.mark.asyncio

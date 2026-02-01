@@ -41,7 +41,7 @@ async def test_execute_deletes_application_and_commits(
     uow.job_applications.delete.assert_called_once_with(app_id)
     uow.commit.assert_called_once()
 
-    assert result == app_id
+    assert result is None
 
 
 @pytest.mark.asyncio
