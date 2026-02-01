@@ -2,7 +2,6 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 from application.ports import CommandHandler, UnitOfWork
-from domain.exceptions import JobApplicationNotFoundException
 
 
 class DeleteJobApplicationCommand(BaseModel):
@@ -24,13 +23,6 @@ class DeleteJobApplicationCommandHandler(
 
     async def execute(self, command: DeleteJobApplicationCommand) -> UUID:
         async with self._uow:
-            job_application = await self._uow.job_applications.get_by_id(
-                command.job_application_id
-            )
-            if not job_application:
-                raise JobApplicationNotFoundException(
-                    f"Job application with id {command.job_application_id} not found"
-                )
-            await self._uow.job_applications.delete(job_application)
+            await self._uow.job_applications.delete(command.job_application_id)
             await self._uow.commit()
-        return job_application.id
+        return command.job_application_id

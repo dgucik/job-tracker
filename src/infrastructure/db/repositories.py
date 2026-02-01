@@ -1,6 +1,7 @@
 from typing import Any
 from uuid import UUID
 from domain.entities.job_application import JobApplication
+from domain.exceptions import JobApplicationNotFoundException
 from domain.repositories import JobApplicationRepository
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import Result, Select, select
@@ -37,8 +38,13 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         model = self._to_model(entity)
         await self._session.merge(model)
 
-    async def delete(self, entity: JobApplication) -> None:
-        model = self._to_model(entity)
+    async def delete(self, id: UUID) -> None:
+        stmt = select(JobApplicationModel).where(JobApplicationModel.id == id)
+        model = await self._execute_scalar(stmt)
+        if model is None:
+            raise JobApplicationNotFoundException(
+                f"Job application with id {id} not found"
+            )
         await self._session.delete(model)
 
     def _to_domain(self, model: JobApplicationModel) -> JobApplication:
