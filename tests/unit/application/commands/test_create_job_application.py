@@ -5,7 +5,7 @@ from application.commands.create_job_application import (
     CreateJobApplicationCommandHandler,
     RawCompensation,
 )
-from application.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import EmploymentType
 from domain.value_objects.work_location import WorkModel

@@ -1,6 +1,6 @@
 import pytest
 
-from application.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO
 from application.queries.get_job_application_list import (
     GetJobApplicationListQuery,
     GetJobApplicationListQueryHandler,

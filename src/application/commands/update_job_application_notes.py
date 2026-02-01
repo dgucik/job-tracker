@@ -2,9 +2,7 @@ from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
-from application.mappers.job_application import job_application_to_dto
 from application.ports import CommandHandler, UnitOfWork
-from application.dtos import JobApplicationDTO
 from domain.exceptions import JobApplicationNotFoundException
 
 
@@ -14,7 +12,7 @@ class UpdateJobApplicationNotesCommand(BaseModel):
 
 
 class UpdateJobApplicationNotesCommandHandler(
-    CommandHandler[UpdateJobApplicationNotesCommand, JobApplicationDTO]
+    CommandHandler[UpdateJobApplicationNotesCommand, UUID]
 ):
     """
     Handler for updating the notes of a job application.
@@ -26,9 +24,7 @@ class UpdateJobApplicationNotesCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(
-        self, command: UpdateJobApplicationNotesCommand
-    ) -> JobApplicationDTO:
+    async def execute(self, command: UpdateJobApplicationNotesCommand) -> UUID:
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
                 command.job_application_id
@@ -39,4 +35,4 @@ class UpdateJobApplicationNotesCommandHandler(
                 )
             job_application.add_notes(command.notes)
             await self._uow.commit()
-        return job_application_to_dto(job_application)
+        return job_application.id

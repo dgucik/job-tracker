@@ -9,7 +9,7 @@ class DeleteJobApplicationCommand(BaseModel):
 
 
 class DeleteJobApplicationCommandHandler(
-    CommandHandler[DeleteJobApplicationCommand, UUID]
+    CommandHandler[DeleteJobApplicationCommand, None]
 ):
     """
     Handler for deleting a job application.
@@ -21,8 +21,8 @@ class DeleteJobApplicationCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(self, command: DeleteJobApplicationCommand) -> UUID:
+    async def execute(self, command: DeleteJobApplicationCommand) -> None:
         async with self._uow:
             await self._uow.job_applications.delete(command.job_application_id)
             await self._uow.commit()
-        return command.job_application_id
+        return None

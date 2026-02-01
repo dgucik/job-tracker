@@ -1,7 +1,5 @@
 from uuid import UUID, uuid4
 
-from application.dtos import JobApplicationDTO
-from application.mappers.job_application import job_application_to_dto
 from application.ports import CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus
 from domain.exceptions import JobApplicationNotFoundException
@@ -14,7 +12,7 @@ class UpdateJobApplicationStatusCommand(BaseModel):
 
 
 class UpdateJobApplicationStatusCommandHandler(
-    CommandHandler[UpdateJobApplicationStatusCommand, JobApplicationDTO]
+    CommandHandler[UpdateJobApplicationStatusCommand, UUID]
 ):
     """
     Handler for updating the status of a job application.
@@ -26,9 +24,7 @@ class UpdateJobApplicationStatusCommandHandler(
     def __init__(self, uow: UnitOfWork):
         self._uow = uow
 
-    async def execute(
-        self, command: UpdateJobApplicationStatusCommand
-    ) -> JobApplicationDTO:
+    async def execute(self, command: UpdateJobApplicationStatusCommand) -> UUID:
         status = ApplicationStatus(command.new_status)
         async with self._uow:
             job_application = await self._uow.job_applications.get_by_id(
@@ -40,4 +36,4 @@ class UpdateJobApplicationStatusCommandHandler(
                 )
             job_application.update_status(status)
             await self._uow.commit()
-        return job_application_to_dto(job_application)
+        return job_application.id

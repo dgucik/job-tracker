@@ -1,7 +1,7 @@
 from pydantic import BaseModel
 from application.mappers.job_application import job_application_to_dto
 from application.ports import QueryHandler, UnitOfWork
-from application.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO
 
 
 class GetJobApplicationListQuery(BaseModel):

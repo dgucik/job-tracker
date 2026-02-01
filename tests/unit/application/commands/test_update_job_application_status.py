@@ -5,7 +5,7 @@ from application.commands.update_job_application_status import (
     UpdateJobApplicationStatusCommand,
     UpdateJobApplicationStatusCommandHandler,
 )
-from application.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.exceptions import JobApplicationNotFoundException
 from domain.value_objects.work_location import WorkLocation, WorkModel

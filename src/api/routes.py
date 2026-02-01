@@ -12,7 +12,7 @@ from application.commands.update_job_application_status import (
 from application.ports import CommandBus, QueryBus
 from application.queries.get_job_application_list import GetJobApplicationListQuery
 from api.dependencies.query_bus import get_query_bus
-from application.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO
 from application.commands.create_job_application import CreateJobApplicationCommand
 
 router = APIRouter()

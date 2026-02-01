@@ -1,6 +1,6 @@
 from domain.entities.job_application import JobApplication
 
-from application.dtos import (
+from application.queries.dtos import (
     CompensationDTO,
     JobApplicationDTO,
 )
