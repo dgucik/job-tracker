@@ -84,11 +84,11 @@ class JobApplication:
             notes=notes,
         )
         for compensation in compensations:
-            obj.add_compensation(compensation)
+            obj._add_compensation(compensation)
 
         return obj
 
-    def add_compensation(self, compensation: Compensation) -> None:
+    def _add_compensation(self, compensation: Compensation) -> None:
         """
         Add a Compensation object to the job application.
 

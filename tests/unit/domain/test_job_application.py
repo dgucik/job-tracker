@@ -59,7 +59,7 @@ def test_should_add_compensation_to_application(job_application):
         currency="USD",
         employment_type=EmploymentType.PERMANENT,
     )
-    job_application.add_compensation(compensation)
+    job_application._add_compensation(compensation)
 
     assert len(job_application.compensations) == 1
     assert job_application.compensations[0].min_salary == 6000
@@ -83,9 +83,9 @@ def test_should_raise_exception_for_duplicate_compensation(job_application):
         employment_type=EmploymentType.B2B,
     )
 
-    job_application.add_compensation(compensation)
+    job_application._add_compensation(compensation)
     with pytest.raises(CompensationException) as exc_info:
-        job_application.add_compensation(duplicate_compensation)
+        job_application._add_compensation(duplicate_compensation)
 
     assert str(exc_info.value) == "Compensation with employment B2B already exists."
 
