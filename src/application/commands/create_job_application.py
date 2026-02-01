@@ -1,5 +1,5 @@
+from dataclasses import dataclass
 from uuid import UUID
-from pydantic import BaseModel, Field
 
 from application.ports import CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus, JobApplication
@@ -7,22 +7,24 @@ from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
 
 
-class RawCompensation(BaseModel):
-    min_salary: int | None = Field(default=None, examples=[5000], ge=0)
-    max_salary: int | None = Field(default=None, examples=[8000], ge=0)
-    currency: str | None = Field(default=None, examples=["USD"])
-    employment_type: str = Field(examples=["B2B"])
+@dataclass
+class RawCompensation:
+    min_salary: int | None
+    max_salary: int | None
+    currency: str | None
+    employment_type: str
 
 
-class CreateJobApplicationCommand(BaseModel):
-    company_name: str = Field(min_length=1, max_length=255, examples=["Google"])
-    role_name: str = Field(min_length=1, max_length=255, examples=["Software Engineer"])
-    posting_url: str = Field(examples=["https://www.google.com"])
-    status: str = Field(examples=["APPLIED"])
-    work_model: WorkModel = Field(examples=["REMOTE"])
-    work_location: str | None = Field(default=None, examples=["Warsaw"])
-    compensations: list[RawCompensation] = Field(default_factory=list)
-    notes: str | None = Field(default=None, examples=["Exciting opportunity"])
+@dataclass
+class CreateJobApplicationCommand:
+    company_name: str
+    role_name: str
+    posting_url: str
+    status: str
+    work_model: str
+    work_location: str | None
+    compensations: list[RawCompensation]
+    notes: str | None
 
 
 class CreateJobApplicationCommandHandler(
@@ -40,7 +42,7 @@ class CreateJobApplicationCommandHandler(
 
     async def execute(self, command: CreateJobApplicationCommand) -> UUID:
         work_location = WorkLocation(
-            work_model=command.work_model,
+            work_model=WorkModel(command.work_model),
             location=command.work_location,
         )
         compensations = [
@@ -48,7 +50,7 @@ class CreateJobApplicationCommandHandler(
                 min_salary=c.min_salary,
                 max_salary=c.max_salary,
                 currency=c.currency,
-                employment_type=EmploymentType[c.employment_type],
+                employment_type=EmploymentType(c.employment_type),
             )
             for c in command.compensations
         ]

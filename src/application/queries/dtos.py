@@ -1,9 +1,6 @@
 from dataclasses import dataclass
 from uuid import UUID
 
-from domain.entities.job_application import ApplicationStatus
-from domain.value_objects.work_location import WorkModel
-
 
 @dataclass
 class CompensationListItemDTO:
@@ -19,8 +16,8 @@ class JobApplicationListItemDTO:
     company_name: str
     role_name: str
     posting_url: str
-    status: ApplicationStatus
-    work_model: WorkModel
+    status: str
+    work_model: str
     work_location: str | None
     compensations: list[CompensationListItemDTO]
     notes: str | None

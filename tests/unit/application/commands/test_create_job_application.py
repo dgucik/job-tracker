@@ -1,12 +1,12 @@
 import pytest
 
+from uuid import UUID
+
 from application.commands.create_job_application import (
     CreateJobApplicationCommand,
     CreateJobApplicationCommandHandler,
     RawCompensation,
 )
-from uuid import UUID
-
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import EmploymentType
 from domain.value_objects.work_location import WorkModel
@@ -24,14 +24,14 @@ def valid_command():
         role_name="Software Engineer",
         posting_url="https://techcorp.com/jobs/123",
         status="APPLIED",
-        work_model="REMOTE",
+        work_model=WorkModel.REMOTE,
         work_location="Warsaw",
         compensations=[
             RawCompensation(
                 min_salary=5000,
                 max_salary=8000,
                 currency="USD",
-                employment_type="B2B",
+                employment_type=EmploymentType.B2B,
             )
         ],
         notes="Exciting opportunity",
@@ -78,9 +78,10 @@ async def test_execute_with_empty_compensations(handler, uow):
         role_name="DevOps",
         posting_url="https://startup.com/job",
         status="REJECTED",
-        work_model="HYBRID",
+        work_model=WorkModel.HYBRID,
         work_location="Kraków",
         compensations=[],
+        notes=None,
     )
 
     await handler.execute(command)
@@ -97,22 +98,23 @@ async def test_execute_with_multiple_compensations(handler, uow):
         role_name="Lead",
         posting_url="https://bigco.com/job",
         status="INTERVIEWED",
-        work_model="ONSITE",
+        work_model=WorkModel.ONSITE,
         work_location="Berlin",
         compensations=[
             RawCompensation(
                 min_salary=10000,
                 max_salary=15000,
                 currency="EUR",
-                employment_type="B2B",
+                employment_type=EmploymentType.B2B,
             ),
             RawCompensation(
                 min_salary=8000,
                 max_salary=12000,
                 currency="EUR",
-                employment_type="PERMANENT",
+                employment_type=EmploymentType.PERMANENT,
             ),
         ],
+        notes=None,
     )
 
     await handler.execute(command)
