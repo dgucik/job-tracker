@@ -39,8 +39,13 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         await self._session.merge(model)
 
     async def delete(self, id: UUID) -> None:
-        stmt = select(JobApplicationModel).where(JobApplicationModel.id == id)
-        model = await self._execute_scalar(stmt)
+        stmt = (
+            select(JobApplicationModel)
+            .where(JobApplicationModel.id == id)
+            .options(selectinload(JobApplicationModel.compensations))
+        )
+        result: Result[Any] = await self._session.execute(stmt)
+        model = result.scalar_one_or_none()
         if model is None:
             raise JobApplicationNotFoundException(
                 f"Job application with id {id} not found"
