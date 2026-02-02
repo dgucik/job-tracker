@@ -3,7 +3,7 @@ from settings.partials.database import DatabaseSettings
 from settings.partials.logging import LogSettings
 
 
-class AppBaseSettings(BaseSettings):
+class Settings(BaseSettings):
     """Main application configuration settings."""
 
     APP_BASE_URL: str

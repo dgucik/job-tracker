@@ -49,7 +49,9 @@ def run_migrations_offline() -> None:
     script output.
 
     """
-    url = config.get_main_option("sqlalchemy.url")
+    url = (
+        config.get_main_option("sqlalchemy.url") or settings.db.sqlalchemy_database_url
+    )
     context.configure(
         url=url,
         target_metadata=target_metadata,
@@ -74,9 +76,13 @@ async def run_migrations_online() -> None:
     In this scenario we need to create an Engine
     and associate a connection with the context.
 
+    URL can be overridden via config (e.g. for Testcontainers).
     """
+    url = (
+        config.get_main_option("sqlalchemy.url") or settings.db.sqlalchemy_database_url
+    )
     connectable = create_async_engine(
-        settings.db.sqlalchemy_database_url,
+        url,
         poolclass=pool.NullPool,
     )
 
