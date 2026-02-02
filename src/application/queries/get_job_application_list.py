@@ -1,7 +1,11 @@
+import logging
 from dataclasses import dataclass
-from application.queries.mappers import job_application_entity_to_dto
+
 from application.ports import QueryHandler, UnitOfWork
 from application.queries.dtos import JobApplicationDTO
+from application.queries.mappers import job_application_entity_to_dto
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -27,6 +31,9 @@ class GetJobApplicationListQueryHandler(
     ) -> list[JobApplicationDTO]:
         async with self._uow:
             job_applications = await self._uow.job_applications.get_all()
+        logger.info(
+            "Job application list retrieved", extra={"count": len(job_applications)}
+        )
         job_application_list_items = [
             job_application_entity_to_dto(job_application)
             for job_application in job_applications

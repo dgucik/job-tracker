@@ -1,3 +1,4 @@
+import logging
 from dataclasses import dataclass
 from uuid import UUID
 
@@ -5,6 +6,8 @@ from application.ports import CommandHandler, UnitOfWork
 from domain.entities.job_application import ApplicationStatus, JobApplication
 from domain.value_objects.compensation import Compensation, EmploymentType
 from domain.value_objects.work_location import WorkLocation, WorkModel
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -66,4 +69,11 @@ class CreateJobApplicationCommandHandler(
         async with self._uow:
             await self._uow.job_applications.add(job_application)
             await self._uow.commit()
+        logger.info(
+            "Job application created",
+            extra={
+                "job_application_id": str(job_application.id),
+                "company": command.company_name,
+            },
+        )
         return job_application.id

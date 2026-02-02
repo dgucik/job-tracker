@@ -1,8 +1,11 @@
+import logging
 from dataclasses import dataclass
 from uuid import UUID
 
 from application.ports import CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -34,4 +37,8 @@ class DeleteJobApplicationCommandHandler(
                 )
             await self._uow.job_applications.delete(job_application)
             await self._uow.commit()
+        logger.info(
+            "Job application deleted",
+            extra={"job_application_id": str(command.job_application_id)},
+        )
         return None

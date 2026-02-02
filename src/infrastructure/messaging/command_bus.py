@@ -1,6 +1,10 @@
+import logging
 from typing import Any
+
 from application.ports import CommandBus, CommandHandler
 from infrastructure.exceptions import HandlerNotRegisteredException
+
+logger = logging.getLogger(__name__)
 
 
 class InMemoryCommandBus(CommandBus):
@@ -16,6 +20,10 @@ class InMemoryCommandBus(CommandBus):
         command_type = type(command)
         handler = self._handlers.get(command_type)
         if handler is None:
+            logger.warning(
+                "No handler registered for command",
+                extra={"command_type": str(command_type)},
+            )
             raise HandlerNotRegisteredException(
                 f"No handler registered for command {command_type}"
             )

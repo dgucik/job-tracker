@@ -1,6 +1,10 @@
+import logging
 from typing import Any
+
 from application.ports import QueryBus, QueryHandler
 from infrastructure.exceptions import HandlerNotRegisteredException
+
+logger = logging.getLogger(__name__)
 
 
 class InMemoryQueryBus(QueryBus):
@@ -16,6 +20,9 @@ class InMemoryQueryBus(QueryBus):
         query_type = type(query)
         handler = self._handlers.get(query_type)
         if handler is None:
+            logger.warning(
+                "No handler registered for query", extra={"query_type": str(query_type)}
+            )
             raise HandlerNotRegisteredException(
                 f"No handler registered for query {query_type}"
             )

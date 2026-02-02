@@ -1,9 +1,11 @@
+import logging
 from dataclasses import dataclass
 from uuid import UUID
 
-
 from application.ports import CommandHandler, UnitOfWork
 from domain.exceptions import JobApplicationNotFoundException
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -37,4 +39,8 @@ class UpdateJobApplicationNotesCommandHandler(
             job_application.add_notes(command.notes)
             await self._uow.job_applications.update(job_application)
             await self._uow.commit()
+        logger.info(
+            "Job application notes updated",
+            extra={"job_application_id": str(command.job_application_id)},
+        )
         return job_application.id
