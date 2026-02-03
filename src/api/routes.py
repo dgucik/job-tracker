@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Body, Depends, status
+from fastapi import APIRouter, Body, Depends, File, UploadFile, status
 
 from api.dependencies.command_bus import get_command_bus
 from api.mappers import (
@@ -21,6 +21,9 @@ from application.commands.update_job_application_notes import (
 )
 from application.commands.update_job_application_status import (
     UpdateJobApplicationStatusCommand,
+)
+from application.commands.upload_job_application_document import (
+    UploadJobApplicationDocumentCommand,
 )
 from application.ports import CommandBus, QueryBus
 from application.queries.dtos import JobApplicationDTO
@@ -103,3 +106,23 @@ async def update_job_application_notes(
     )
     updated_job_application_id: UUID = await command_bus.execute(command)
     return JobApplicationIdResponse(id=updated_job_application_id)
+
+
+@router.post(
+    "/{job_application_id}/document",
+    status_code=status.HTTP_201_CREATED,
+    response_model=JobApplicationIdResponse,
+)
+async def upload_job_application_document(
+    job_application_id: UUID,
+    file: UploadFile = File(...),
+    command_bus: CommandBus = Depends(get_command_bus),
+) -> JobApplicationIdResponse:
+    command = UploadJobApplicationDocumentCommand(
+        job_application_id=job_application_id,
+        filename=file.filename,
+        content=await file.read(),
+        mime_type=file.content_type,
+    )
+    uploaded_job_application_id: UUID = await command_bus.execute(command)
+    return JobApplicationIdResponse(id=uploaded_job_application_id)

@@ -1,6 +1,7 @@
 from typing import Any
 from uuid import UUID
 from domain.entities.job_application import JobApplication
+from domain.entities.job_application_document import JobApplicationDocument
 from domain.repositories import JobApplicationRepository
 from infrastructure.exceptions import EntityNotFoundError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -9,7 +10,11 @@ from sqlalchemy.orm import selectinload
 
 from domain.value_objects.compensation import Compensation
 from domain.value_objects.work_location import WorkLocation
-from infrastructure.db.models import JobApplicationModel, JobCompensationModel
+from infrastructure.db.models import (
+    JobApplicationDocumentModel,
+    JobApplicationModel,
+    JobCompensationModel,
+)
 
 
 class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
@@ -22,7 +27,8 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
 
     async def get_all(self) -> list[JobApplication]:
         stmt = select(JobApplicationModel).options(
-            selectinload(JobApplicationModel.compensations)
+            selectinload(JobApplicationModel.compensations),
+            selectinload(JobApplicationModel.document),
         )
         return await self._execute_many(stmt)
 
@@ -31,6 +37,7 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
             select(JobApplicationModel)
             .where(JobApplicationModel.id == id)
             .options(selectinload(JobApplicationModel.compensations))
+            .options(selectinload(JobApplicationModel.document))
         )
         return await self._execute_scalar(stmt)
 
@@ -62,6 +69,13 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
                 )
                 for comp in model.compensations
             ],
+            document=JobApplicationDocument(
+                filename=model.document.filename,
+                content=model.document.content,
+                mime_type=model.document.mime_type,
+            )
+            if model.document
+            else None,
             notes=model.notes,
         )
 
@@ -83,6 +97,13 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
                 )
                 for comp in entity.compensations
             ],
+            document=JobApplicationDocumentModel(
+                filename=entity.document.filename,
+                content=entity.document.content,
+                mime_type=entity.document.mime_type,
+            )
+            if entity.document
+            else None,
             notes=entity.notes,
         )
         return model

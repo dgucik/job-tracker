@@ -3,6 +3,7 @@ from enum import Enum
 from uuid import UUID, uuid4
 from datetime import datetime, UTC, date
 
+from domain.entities.job_application_document import JobApplicationDocument
 from domain.exceptions import CompensationException
 from domain.value_objects.compensation import Compensation
 from domain.value_objects.work_location import WorkLocation
@@ -30,6 +31,7 @@ class JobApplication:
         status: Current status of the application.
         work_location: WorkLocation object containing work model and location.
         compensations: List of Compensation objects.
+        document: JobApplicationDocument object containing the application document.
         notes: Additional notes regarding the application.
     """
 
@@ -43,6 +45,7 @@ class JobApplication:
     status: ApplicationStatus
     work_location: WorkLocation
     compensations: list[Compensation]
+    document: JobApplicationDocument | None = None
     notes: str | None = None
 
     @classmethod
@@ -123,3 +126,12 @@ class JobApplication:
             notes: The notes to add to the application.
         """
         self.notes = notes
+
+    def add_document(self, document: JobApplicationDocument) -> None:
+        """
+        Add a document to the job application.
+
+        Args:
+            document: The document to add to the application.
+        """
+        self.document = document
