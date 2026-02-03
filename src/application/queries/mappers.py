@@ -3,7 +3,9 @@ from domain.entities.job_application import JobApplication
 from application.queries.dtos import (
     CompensationDTO,
     JobApplicationDTO,
+    JobApplicationDocumentDTO,
 )
+from domain.entities.job_application_document import JobApplicationDocument
 
 
 def job_application_entity_to_dto(
@@ -27,4 +29,14 @@ def job_application_entity_to_dto(
             for c in entity.compensations
         ],
         notes=entity.notes,
+    )
+
+
+def job_application_document_entity_to_dto(
+    entity: JobApplicationDocument,
+) -> JobApplicationDocumentDTO:
+    return JobApplicationDocumentDTO(
+        filename=entity.filename,
+        content=entity.content,
+        mime_type=entity.mime_type,
     )

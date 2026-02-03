@@ -1,5 +1,5 @@
 from uuid import UUID
-from fastapi import APIRouter, Body, Depends, File, UploadFile, status
+from fastapi import APIRouter, Body, Depends, File, Response, UploadFile, status
 
 from api.dependencies.command_bus import get_command_bus
 from api.mappers import (
@@ -26,7 +26,10 @@ from application.commands.upload_job_application_document import (
     UploadJobApplicationDocumentCommand,
 )
 from application.ports import CommandBus, QueryBus
-from application.queries.dtos import JobApplicationDTO
+from application.queries.dtos import JobApplicationDTO, JobApplicationDocumentDTO
+from application.queries.get_job_application_document import (
+    GetJobApplicationDocumentQuery,
+)
 from application.queries.get_job_application_list import GetJobApplicationListQuery
 from api.dependencies.query_bus import get_query_bus
 from application.commands.create_job_application import CreateJobApplicationCommand
@@ -126,3 +129,21 @@ async def upload_job_application_document(
     )
     uploaded_job_application_id: UUID = await command_bus.execute(command)
     return JobApplicationIdResponse(id=uploaded_job_application_id)
+
+
+@router.get(
+    "/{job_application_id}/document",
+    status_code=status.HTTP_200_OK,
+    response_class=Response,
+)
+async def get_job_application_document(
+    job_application_id: UUID,
+    query_bus: QueryBus = Depends(get_query_bus),
+) -> Response:
+    query = GetJobApplicationDocumentQuery(job_application_id=job_application_id)
+    dto: JobApplicationDocumentDTO = await query_bus.execute(query)
+    return Response(
+        content=dto.content,
+        media_type=dto.mime_type,
+        headers={"Content-Disposition": f"attachment; filename={dto.filename}"},
+    )

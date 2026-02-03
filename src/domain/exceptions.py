@@ -44,3 +44,11 @@ class JobApplicationNotFoundException(BaseDomainException):
     def __init__(self, message: str = "Job application not found.") -> None:
         self.message = message
         super().__init__(self.message)
+
+
+class JobApplicationDocumentNotFoundException(BaseDomainException):
+    """Exception raised when a job application document is not found."""
+
+    def __init__(self, message: str = "Job application document not found.") -> None:
+        self.message = message
+        super().__init__(self.message)

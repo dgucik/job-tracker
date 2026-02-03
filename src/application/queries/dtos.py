@@ -21,3 +21,10 @@ class JobApplicationDTO:
     work_location: str | None
     compensations: list[CompensationDTO]
     notes: str | None
+
+
+@dataclass
+class JobApplicationDocumentDTO:
+    filename: str
+    content: bytes
+    mime_type: str

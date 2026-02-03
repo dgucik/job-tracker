@@ -8,6 +8,7 @@ from fastapi.responses import JSONResponse
 from domain.exceptions import (
     CompensationException,
     CurrencyNotProvidedException,
+    JobApplicationDocumentNotFoundException,
     JobApplicationNotFoundException,
     SalaryRangeException,
     WorkLocationException,
@@ -52,6 +53,7 @@ EXCEPTION_REGISTRY: list[dict[str, Any]] = [
     {"exception": CurrencyNotProvidedException, "status_code": status.HTTP_400_BAD_REQUEST},
     {"exception": SalaryRangeException, "status_code": status.HTTP_400_BAD_REQUEST},
     {"exception": CompensationException, "status_code": status.HTTP_400_BAD_REQUEST},
+    {"exception": JobApplicationDocumentNotFoundException, "status_code": status.HTTP_404_NOT_FOUND},
     # Infrastructure
     {"exception": EntityNotFoundError, "status_code": status.HTTP_404_NOT_FOUND},
     {"exception": HandlerNotRegisteredException, "status_code": status.HTTP_501_NOT_IMPLEMENTED, "log_warning": True},

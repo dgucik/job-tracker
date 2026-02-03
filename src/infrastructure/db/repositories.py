@@ -42,7 +42,7 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         return await self._execute_scalar(stmt)
 
     async def update(self, entity: JobApplication) -> None:
-        model = await self._get_model_or_raise(entity.id)
+        model = await self._get_model_for_update(entity.id)
         self._apply_entity_to_model(model, entity)
 
     async def delete(self, entity: JobApplication) -> None:
@@ -118,9 +118,35 @@ class SqlAlchemyJobApplicationRepository(JobApplicationRepository):
         model.work_model = entity.work_location.work_model
         model.location = entity.work_location.location
         model.notes = entity.notes
+        if entity.document is not None:
+            if model.document is not None:
+                model.document.filename = entity.document.filename
+                model.document.content = entity.document.content
+                model.document.mime_type = entity.document.mime_type
+            else:
+                model.document = JobApplicationDocumentModel(
+                    filename=entity.document.filename,
+                    content=entity.document.content,
+                    mime_type=entity.document.mime_type,
+                    job_application_id=model.id,
+                )
+        else:
+            model.document = None
 
     async def _get_model_or_raise(self, id: UUID) -> JobApplicationModel:
         model = await self._session.get(JobApplicationModel, id)
+        if model is None:
+            raise EntityNotFoundError(f"Job application with id {id} not found")
+        return model
+
+    async def _get_model_for_update(self, id: UUID) -> JobApplicationModel:
+        stmt = (
+            select(JobApplicationModel)
+            .where(JobApplicationModel.id == id)
+            .options(selectinload(JobApplicationModel.document))
+        )
+        result = await self._session.execute(stmt)
+        model = result.scalar_one_or_none()
         if model is None:
             raise EntityNotFoundError(f"Job application with id {id} not found")
         return model
